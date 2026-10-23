@@ -8,7 +8,7 @@ Il progetto offre **tre modi** per usarla:
 
 | Versione | File | Quando conviene |
 | --- | --- | --- |
-| **Online** (GitHub Pages) | [Apri l'app](https://Gab2412.github.io/Mappatura_classi/) | Nessuna installazione: apri la pagina, scegli la cartella e lavora. |
+| **Online** (GitHub Pages) | [Apri l'app](https://gab2412.github.io/Mappatura_classi/) | Nessuna installazione: apri la pagina, scegli la cartella e lavora. |
 | **HTML portatile** | `Cartina-di-Classe.html` | Un solo file da portare su una chiavetta o su un computer senza Python. |
 | **App desktop** | `CartinaDiClasse.exe` | Windows: finestra propria e cartella `files` creata accanto all'app. |
 
@@ -331,7 +331,7 @@ Il file generato è autoconsistente: CSS e script sono incorporati, nessuna riso
 
 ### Pubblicare su GitHub Pages
 
-La cartella pubblicata è `docs/`. Pages pubblica il branch `main`, cartella `/docs`; il file `.nojekyll` è già presente. La landing è [Gab2412.github.io/Mappatura_classi](https://Gab2412.github.io/Mappatura_classi/), l'app è su `/app.html`; l'exe e il modello Excel si scaricano dalla stessa pagina.
+La cartella pubblicata è `docs/`. Pages pubblica il branch `main`, cartella `/docs`; il file `.nojekyll` è già presente. La landing è [Gab2412.github.io/Mappatura_classi](https://gab2412.github.io/Mappatura_classi/), l'app è su `/app.html`; l'exe e il modello Excel si scaricano dalla stessa pagina.
 
 Le release sono create dal workflow `.github/workflows/release.yml` quando si pubblica un tag `v*`: allega l'exe, l'HTML e il modello Excel.
 

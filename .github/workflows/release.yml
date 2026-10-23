@@ -27,7 +27,7 @@ jobs:
             - **HTML portatile:** `app.html` — apri con Chrome o Edge.
             - **Modello Excel:** `Modello_Planimetria_Classi.xlsx`.
 
-            Pagina online: https://Gab2412.github.io/Mappatura_classi/
+            Pagina online: https://gab2412.github.io/Mappatura_classi/
 
             I dati restano nella cartella scelta: nessun account, nessun cloud.
           files: |

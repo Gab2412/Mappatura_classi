@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="https://Gab2412.github.io/Mappatura_classi/"><b>Apri l'app online</b></a>
+  <a href="https://gab2412.github.io/Mappatura_classi/"><b>Apri l'app online</b></a>
   &nbsp;·&nbsp;
   <a href="docs/CartinaDiClasse.exe">Scarica l'exe · Windows</a>
   &nbsp;·&nbsp;
@@ -62,7 +62,7 @@ Per un **backup** copia tutta la cartella `files`. Per passare una classe a un c
 
 | Versione | Come | Quando conviene |
 | --- | --- | --- |
-| **Online** | [Apri l'app](https://Gab2412.github.io/Mappatura_classi/) | La più comoda: apri il browser, scegli la cartella e lavora. |
+| **Online** | [Apri l'app](https://gab2412.github.io/Mappatura_classi/) | La più comoda: apri il browser, scegli la cartella e lavora. |
 | **HTML portatile** | [`docs/app.html`](docs/app.html) · dalla pagina online **Scarica .html** | Un solo file da portare su una chiavetta o su un computer senza Python. |
 | **Windows .exe** | [Scarica `CartinaDiClasse.exe`](docs/CartinaDiClasse.exe) | Finestra propria e cartella `files` creata accanto all'app. |
 
@@ -81,7 +81,7 @@ node --test tests/core.test.mjs                   # test del modello dati
 python desktop/test_api.py                        # test del backend
 ```
 
-La cartella `docs/` è il sito pubblicato. La landing è [Gab2412.github.io/Mappatura_classi](https://Gab2412.github.io/Mappatura_classi/), l'app è su `/app.html`; l'exe e il modello Excel sono i download. Pages pubblica `docs/` dal branch `main` (`.nojekyll` incluso).
+La cartella `docs/` è il sito pubblicato. La landing è [Gab2412.github.io/Mappatura_classi](https://gab2412.github.io/Mappatura_classi/), l'app è su `/app.html`; l'exe e il modello Excel sono i download. Pages pubblica `docs/` dal branch `main` (`.nojekyll` incluso).
 
 Tutti i dettagli su comandi, struttura, import, stampa e accessibilità sono nella **[guida completa](GUIDA.md)**.
 
