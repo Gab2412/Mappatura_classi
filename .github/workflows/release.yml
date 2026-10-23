@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Crea la release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Cartina di Classe ${{ github.ref_name }}
+          body: |
+            **Cartina di Classe ${{ github.ref_name }}**
+
+            - **Windows:** `CartinaDiClasse.exe` — nessuna installazione; crea `files` accanto a sé.
+            - **HTML portatile:** `app.html` — apri con Chrome o Edge.
+            - **Modello Excel:** `Modello_Planimetria_Classi.xlsx`.
+
+            Pagina online: https://Gab2412.github.io/Mappatura_classi/
+
+            I dati restano nella cartella scelta: nessun account, nessun cloud.
+          files: |
+            docs/CartinaDiClasse.exe
+            docs/app.html
+            docs/Modello_Planimetria_Classi.xlsx
+          draft: false
+          prerelease: false
