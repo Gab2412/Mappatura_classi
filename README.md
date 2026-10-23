@@ -30,7 +30,7 @@
 
 Cartina di Classe è un'app per docenti: disegna la pianta dei banchi, assegna gli alunni, esporta un PNG pronto per la stampa. È pensata per essere leggibile e usabile anche con poca vista, senza rinunciare a un'interfaccia semplice.
 
-> **Sviluppato con LLM agentici:** questo progetto è nato ed è stato sviluppato a quattro mani in stretta sinergia con modelli di intelligenza artificiale agentica (LLM): un esperimento concreto di collaborazione per creare uno strumento scolastico artigianale, pulito, etico e rigorosamente offline.
+> Progetto sviluppato sfruttando e testando vari LLM agentici.
 
 ## In 30 secondi
 
@@ -99,4 +99,4 @@ Tutti i dettagli su comandi, struttura, import, stampa e accessibilità sono nel
 
 ---
 
-<p align="center"><sub>Sviluppato in sinergia con LLM agentici · Nessun account · Nessun cloud · Nessun tracciamento.</sub></p>
+<p align="center"><sub>Sviluppato sfruttando e testando vari LLM agentici · Nessun account · Nessun cloud</sub></p>
