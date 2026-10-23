@@ -3,7 +3,7 @@
   Cartina di Classe — applicazione portatile in un solo file.
   Nessuna installazione, nessun account, nessuna connessione di rete.
   Tutti i dati restano nella cartella scelta («files»).
-  Generata il 2026-10-23T13:01:14.865Z
+  Generata il 2026-10-23T13:11:49.831Z
 -->
 
 <html lang="it" data-theme="dark">
@@ -5706,18 +5706,38 @@ window.CC.TEMPLATE_XLSX_B64 = "UEsDBBQAAAAIACWAVV1Gx01IlwAAAM0AAAAQAAAAZG9jUHJvc
 
   function ctx() {
     if (!measureCtx) {
-      measureCanvas = global.document.createElement('canvas');
-      measureCanvas.width = 8;
-      measureCanvas.height = 8;
-      measureCtx = measureCanvas.getContext('2d');
+      if (global.document && typeof global.document.createElement === 'function') {
+        try {
+          measureCanvas = global.document.createElement('canvas');
+          if (measureCanvas && typeof measureCanvas.getContext === 'function') {
+            measureCtx = measureCanvas.getContext('2d');
+          }
+        } catch (e) {}
+      }
     }
     return measureCtx;
   }
 
   function measure(text, fontSize, weight) {
     const c = ctx();
-    c.font = (weight || 600) + ' ' + fontSize + 'px ' + FONT;
-    return c.measureText(text).width;
+    if (c && typeof c.measureText === 'function') {
+      try {
+        c.font = (weight || 600) + ' ' + fontSize + 'px ' + FONT;
+        const res = c.measureText(text);
+        if (res && typeof res.width === 'number' && res.width > 0) return res.width;
+      } catch (e) {}
+    }
+    // Stima accurata per Verdana Bold (in assenza di canvas o in ambienti Node/build)
+    const str = String(text == null ? '' : text);
+    let units = 0;
+    for (let i = 0; i < str.length; i++) {
+      const ch = str[i];
+      if (/[A-Z0-9]/.test(ch)) units += 0.76;
+      else if (/[mwMW]/.test(ch)) units += 0.98;
+      else if (/[ijlrtfI1.,' ]/.test(ch)) units += 0.38;
+      else units += 0.62;
+    }
+    return units * fontSize;
   }
 
   function esc(text) {
@@ -5878,38 +5898,37 @@ window.CC.TEMPLATE_XLSX_B64 = "UEsDBBQAAAAIACWAVV1Gx01IlwAAAM0AAAAQAAAAZG9jUHJvc
     const activeCols = active.length;
     const totalUnits = active.reduce(function (sum, c) { return sum + index.maxPerCol[c]; }, 0);
 
-    /* 1. Misurazione etichette file per riservare lo spazio esatto */
+    /* 1. Misurazione etichette file */
     let labelW = 0;
     for (let r = 0; r < rows; r++) {
       const rn = rowName(r, rows);
       labelW = Math.max(labelW, measure(rn.title, 9.2, 700));
       if (rn.note) labelW = Math.max(labelW, measure(rn.note, 7.2, 600));
     }
-    const labelGap = 16;
+    labelW = Math.max(48, Math.min(84, labelW));
+    const labelGap = 14;
     const labelBlockW = labelW + labelGap;
 
-    /* 2. Confini dell'aula e spazio per finestre laterali */
-    const outerMargin = 18;
-    const winBandW = 28;
-    const winMarginBorder = 12; // respiro dal bordo esterno della pagina
-    const winMarginRoom = 22;   // respiro tra finestre ed elementi dell'aula (etichette o banchi)
-    const totalWinSpace = winMarginBorder + winBandW + winMarginRoom; // 62px
-    const normalMargin = 38;    // margine laterale quando su quel lato non ci sono finestre
-
+    /* 2. Confini dell'aula e composizione centrata */
     const isWinLeft = state.windowsSide === 'left';
     const isWinRight = state.windowsSide === 'right';
+    const winW = 24;
+    const winGap = 16;
+    const winOverhead = winW + winGap;
 
-    const roomLeft = isWinLeft ? (outerMargin + totalWinSpace) : (outerMargin + normalMargin);
-    const roomRight = isWinRight ? (W - outerMargin - totalWinSpace) : (W - outerMargin - normalMargin);
-    const roomAvailW = Math.max(100, roomRight - roomLeft);
+    // Spazio orizzontale degli elementi laterali rispetto alla griglia banchi
+    const overhead = labelBlockW + (isWinLeft ? winOverhead : 0) + (isWinRight ? winOverhead : 0);
 
-    /* 3. Dimensionamento dei banchi */
+    // Margine minimo dalla cornice del foglio
+    const pageMarginMin = 34;
+    const maxRoomW = W - 2 * pageMarginMin;
+    const maxDeskGridW = Math.max(50, maxRoomW - overhead);
+
     let gapsW = (activeCols - 1) * LANE_GAP;
     active.forEach(function (c) { gapsW += (index.maxPerCol[c] - 1) * DESK_GAP; });
-    const maxDeskGridW = Math.max(50, roomAvailW - labelBlockW);
 
     let deskW = totalUnits > 0 ? (maxDeskGridW - gapsW) / totalUnits : 0;
-    deskW = Math.max(18, Math.min(155, deskW));
+    deskW = Math.max(18, Math.min(145, deskW));
 
     const labelsTop = 26;
     const boardBand = 34;
@@ -5919,8 +5938,8 @@ window.CC.TEMPLATE_XLSX_B64 = "UEsDBBQAAAAIACWAVV1Gx01IlwAAAM0AAAAQAAAAZG9jUHJvc
     deskH = Math.max(24, Math.min(105, deskH));
 
     /* Proporzione naturale del banco */
-    if (deskW > deskH * 1.65) {
-      deskW = Math.max(18, Math.min(deskW, deskH * 1.65));
+    if (deskW > deskH * 1.62) {
+      deskW = Math.max(18, Math.min(deskW, deskH * 1.62));
     }
 
     let gridW = (activeCols - 1) * LANE_GAP;
@@ -5929,22 +5948,38 @@ window.CC.TEMPLATE_XLSX_B64 = "UEsDBBQAAAAIACWAVV1Gx01IlwAAAM0AAAAQAAAAZG9jUHJvc
     });
     const gridH = rows * deskH + (rows - 1) * ROW_GAP;
 
-    /* 4. Centratura orizzontale perfetta all'interno dell'aula */
-    const contentW = labelBlockW + gridW;
-    const slackX = Math.max(0, roomAvailW - contentW);
-    const startX = roomLeft + slackX / 2;
-    const gridX = startX + labelBlockW;
+    /* 3. Centratura dell'intera composizione (finestre + etichette + banchi) */
+    const roomTotalW = overhead + gridW;
+    const roomStartX = Math.max(pageMarginMin, Math.round((W - roomTotalW) / 2));
 
-    /* 5. Centratura verticale */
+    let winX = null;
+    let labelEndX = null;
+    let gridX = null;
+    let cursor = roomStartX;
+
+    if (isWinLeft) {
+      winX = cursor;
+      cursor += winOverhead;
+    }
+    labelEndX = cursor + labelW;
+    cursor += labelBlockW;
+    gridX = cursor;
+    cursor += gridW;
+    if (isWinRight) {
+      winX = cursor + winGap;
+      cursor += winOverhead;
+    }
+
+    /* 4. Centratura verticale */
     const contentH = labelsTop + gridH + boardGap + boardBand;
     const extraY = Math.max(0, (area.h - contentH) / 2);
     const gridY = area.y + extraY + labelsTop;
 
     const laneX = {};
-    let cursor = gridX;
+    let laneCursor = gridX;
     active.forEach(function (c) {
-      laneX[c] = cursor;
-      cursor += index.maxPerCol[c] * deskW + (index.maxPerCol[c] - 1) * DESK_GAP + LANE_GAP;
+      laneX[c] = laneCursor;
+      laneCursor += index.maxPerCol[c] * deskW + (index.maxPerCol[c] - 1) * DESK_GAP + LANE_GAP;
     });
 
     /* Separatori leggeri tra le colonne */
@@ -5973,9 +6008,9 @@ window.CC.TEMPLATE_XLSX_B64 = "UEsDBBQAAAAIACWAVV1Gx01IlwAAAM0AAAAQAAAAZG9jUHJvc
       const y = gridY + r * (deskH + ROW_GAP);
       const rn = rowName(r, rows);
       const cy = y + deskH / 2;
-      svg += '<text x="' + (gridX - 18) + '" y="' + (cy - (rn.note ? 2 : 0)) + '" fill="' + palette.text + '" font-family="' + FONT + '" font-size="9.2" font-weight="700" text-anchor="end">' + esc(rn.title) + '</text>';
+      svg += '<text x="' + round(labelEndX) + '" y="' + (cy - (rn.note ? 2 : 0)) + '" fill="' + palette.text + '" font-family="' + FONT + '" font-size="9.2" font-weight="700" text-anchor="end">' + esc(rn.title) + '</text>';
       if (rn.note) {
-        svg += '<text x="' + (gridX - 18) + '" y="' + (cy + 10) + '" fill="' + palette.muted + '" font-family="' + FONT + '" font-size="7.2" font-weight="600" text-anchor="end">' + esc(rn.note) + '</text>';
+        svg += '<text x="' + round(labelEndX) + '" y="' + (cy + 10) + '" fill="' + palette.muted + '" font-family="' + FONT + '" font-size="7.2" font-weight="600" text-anchor="end">' + esc(rn.note) + '</text>';
       }
 
       active.forEach(function (c) {
@@ -6004,8 +6039,8 @@ window.CC.TEMPLATE_XLSX_B64 = "UEsDBBQAAAAIACWAVV1Gx01IlwAAAM0AAAAQAAAAZG9jUHJvc
             }
           } else {
             const name = core.formatStudentName(seat.student.name, settings.nameMode);
-            const maxTextW = Math.max(10, deskW - 8);
-            const maxTextH = Math.max(10, deskH - 8 - (settings.showNumbers ? 4 : 0));
+            const maxTextW = Math.max(10, deskW - 14);
+            const maxTextH = Math.max(10, deskH - 12 - (settings.showNumbers ? 5 : 0));
             const base = Math.min(MAX_NAME_SIZE, deskW / 6.4, deskH / 3.05);
             const fit = fitName(name, maxTextW, maxTextH, base);
             const blockH = fit.lines.length * fit.lineHeight;
@@ -6020,22 +6055,19 @@ window.CC.TEMPLATE_XLSX_B64 = "UEsDBBQAAAAIACWAVV1Gx01IlwAAAM0AAAAQAAAAZG9jUHJvc
 
     /* Lavagna e piè di pagina ---------------------------------------- */
     const boardY = gridY + gridH + boardGap;
-    const boardX1 = Math.max(outerMargin + 10, startX - 8);
-    const boardX2 = Math.min(W - outerMargin - 10, gridX + gridW + 8);
+    const boardX1 = Math.max(24, (winX != null && isWinLeft) ? winX : (labelEndX - labelW - 6));
+    const boardX2 = Math.min(W - 24, (winX != null && isWinRight) ? (winX + winW) : (gridX + gridW + 6));
     svg += '<line x1="' + round(boardX1) + '" y1="' + round(boardY) + '" x2="' + round(boardX2) + '" y2="' + round(boardY) + '" stroke="' + palette.border + '" stroke-width="3.4"/>';
     svg += '<text x="' + round(boardX1) + '" y="' + round(boardY + 21) + '" fill="' + palette.text + '" font-family="' + FONT + '" font-size="10.2" font-weight="700" letter-spacing="1.2">LAVAGNA · CATTEDRA</text>';
     svg += '<text x="' + round(boardX2) + '" y="' + round(boardY + 21) + '" fill="' + palette.muted + '" font-family="' + FONT + '" font-size="8.4" font-weight="600" text-anchor="end">PRIMA FILA · DAVANTI ALLA CLASSE</text>';
 
     /* Lato delle finestre --------------------------------------------- */
     if (isWinLeft || isWinRight) {
-      const bandX = isWinLeft
-        ? outerMargin + winMarginBorder
-        : W - outerMargin - winMarginBorder - winBandW;
-      const bandTop = round(gridY - 32);
+      const bandTop = round(gridY - 30);
       const bandBottom = round(boardY + 26);
       const bandH = Math.max(60, bandBottom - bandTop);
-      svg += '<rect x="' + round(bandX) + '" y="' + round(bandTop) + '" width="' + winBandW + '" height="' + round(bandH) + '" rx="10" fill="none" stroke="#4a94e0" stroke-width="1.8" stroke-dasharray="6 5"/>';
-      const bandCx = round(bandX + winBandW / 2);
+      svg += '<rect x="' + round(winX) + '" y="' + round(bandTop) + '" width="' + winW + '" height="' + round(bandH) + '" rx="10" fill="none" stroke="#4a94e0" stroke-width="1.8" stroke-dasharray="6 5"/>';
+      const bandCx = round(winX + winW / 2);
       const bandCy = round(bandTop + bandH / 2);
       const fs = 9.5;
       svg += '<text x="0" y="' + round(fs * 0.35) + '" transform="translate(' + bandCx + ' ' + bandCy + ') rotate(-90)"' +
