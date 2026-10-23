@@ -247,8 +247,9 @@
       if (rn.note) labelW = Math.max(labelW, measure(rn.note, 7.2, 600));
     }
     const labelGap = 18;
-    const contentW = labelGap + labelW + gridW;
-    const gridX = area.x + Math.max(0, (area.w - contentW) / 2) + labelGap + labelW;
+    const minLeft = area.x + labelGap + labelW;
+    const centeredX = area.x + (area.w - gridW) / 2;
+    const gridX = Math.max(minLeft, centeredX);
 
     const contentH = labelsTop + gridH + boardGap + boardBand;
     const extraY = Math.max(0, (area.h - contentH) / 2);

@@ -5,25 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cartina di Classe — la pianta dei posti, senza cloud</title>
 <meta name="description" content="Crea la cartina dei posti della tua classe, sistema gli alunni e stampa. I file restano nella tua cartella: nessun account, nessun cloud.">
-<meta name="theme-color" content="#eef2f7">
+<meta name="theme-color" content="#070d18">
 <link rel="icon" href="./icona.png">
 <style>
   :root {
-    --ink: #0b1220;
-    --muted: #46556b;
-    --blue: #003f8f;
-    --blue-dark: #002d66;
-    --green: #146c43;
-    --green-dark: #0f5132;
-    --bg: #eef2f7;
-    --paper: #fffdf8;
-    --line: #c8d3e1;
-    --line-dark: #9fb0c6;
-    --navy: #072a55;
+    --ink: #f1f5f9;
+    --muted: #94a3b8;
+    --blue: #38bdf8;
+    --blue-dark: #0284c7;
+    --green: #10b981;
+    --green-dark: #059669;
+    --bg: #070d18;
+    --paper: #0f172a;
+    --line: #1e293b;
+    --line-dark: #334155;
+    --navy: #030712;
     --radius: 16px;
     --font: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
     --mono: "Cascadia Mono", Consolas, "Courier New", monospace;
-    --shadow: 0 24px 60px rgba(11, 18, 32, .15);
+    --shadow: 0 24px 60px rgba(0, 0, 0, .55);
   }
 
   * { box-sizing: border-box; }
@@ -32,23 +32,24 @@
     margin: 0;
     color: var(--ink);
     background:
-      radial-gradient(900px 520px at 88% -12%, rgba(0, 63, 143, .11), transparent 62%),
-      linear-gradient(180deg, #f7fafd 0%, var(--bg) 48%, #e6edf5 100%);
+      radial-gradient(900px 520px at 88% -12%, rgba(56, 189, 248, .09), transparent 62%),
+      linear-gradient(180deg, #0a1120 0%, var(--bg) 48%, #040810 100%);
     font-family: var(--font);
     font-size: 17px;
     line-height: 1.55;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    color-scheme: dark;
   }
   body::before {
     content: "";
     position: fixed;
     inset: 0 0 auto;
     height: 4px;
-    background: linear-gradient(90deg, var(--blue) 0%, var(--blue) 55%, var(--green) 100%);
+    background: linear-gradient(90deg, var(--blue) 0%, #38bdf8 55%, var(--green) 100%);
     z-index: 20;
   }
-  ::selection { background: #cfe1ff; }
+  ::selection { background: #1e3a5f; color: #fff; }
   a { color: var(--blue); }
   img { max-width: 100%; height: auto; }
   p, h1, h2, h3, figure { margin: 0; }
@@ -63,13 +64,13 @@
     z-index: 30;
     padding: 12px 18px;
     border-radius: 8px;
-    background: #fff;
-    color: var(--ink);
+    background: #1e293b;
+    color: #fff;
     font-weight: 800;
     box-shadow: var(--shadow);
   }
   .skip:focus { top: 16px; }
-  :focus-visible { outline: 3px solid #005fcc; outline-offset: 3px; }
+  :focus-visible { outline: 3px solid #38bdf8; outline-offset: 3px; }
 
   /* Header ----------------------------------------------------------- */
   .site-header {
@@ -95,7 +96,7 @@
     flex: 0 0 auto;
     overflow: hidden;
     border-radius: 9px;
-    box-shadow: 0 3px 10px rgba(11, 18, 32, .14);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .4);
   }
   .brand-mark svg { display: block; width: 100%; height: 100%; }
   .brand-mark--small { width: 28px; height: 28px; border-radius: 7px; box-shadow: none; }
@@ -114,13 +115,18 @@
   }
   .nav a:hover { color: var(--ink); }
   .nav .header-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-height: 42px;
     padding: 0 18px;
     border: 2px solid var(--blue);
     border-radius: 10px;
     color: var(--blue);
+    line-height: 1;
+    box-sizing: border-box;
   }
-  .nav .header-cta:hover { background: var(--blue); color: #fff; }
+  .nav .header-cta:hover { background: var(--blue); color: #070d18; }
 
   /* Hero ------------------------------------------------------------- */
   .hero {
@@ -133,9 +139,9 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background-image: radial-gradient(rgba(0, 63, 143, .16) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(56, 189, 248, .12) 1px, transparent 1px);
     background-size: 22px 22px;
-    opacity: .45;
+    opacity: .35;
     -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
     mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
   }
@@ -222,16 +228,16 @@
   .btn-primary:hover { background: var(--green-dark); box-shadow: 0 12px 26px rgba(20, 108, 67, .28); }
   .btn-quiet {
     border-color: var(--line-dark);
-    background: rgba(255, 255, 255, .52);
+    background: rgba(30, 41, 59, .6);
     color: var(--ink);
   }
-  .btn-quiet:hover { border-color: var(--ink); background: #fff; }
+  .btn-quiet:hover { border-color: var(--muted); background: rgba(30, 41, 59, .95); }
   .btn-light {
-    background: #fff;
-    color: var(--blue);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, .16);
+    background: #1e293b;
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .3);
   }
-  .btn-light:hover { background: #eaf2ff; }
+  .btn-light:hover { background: #334155; }
   .micro {
     margin-top: 14px;
     color: var(--muted);
@@ -242,9 +248,9 @@
   .browser {
     overflow: hidden;
     min-width: 0;
-    border: 1px solid #b7c6d8;
+    border: 1px solid var(--line-dark);
     border-radius: 16px;
-    background: #fff;
+    background: #0f172a;
     box-shadow: var(--shadow);
   }
   .browser-bar {
@@ -253,8 +259,8 @@
     gap: 10px;
     min-height: 38px;
     padding: 0 13px;
-    border-bottom: 1px solid #dbe4ee;
-    background: #f5f8fc;
+    border-bottom: 1px solid var(--line);
+    background: #0b1325;
   }
   .dots { display: inline-flex; gap: 5px; }
   .dots i {
@@ -262,11 +268,11 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #c6d2e0;
+    background: #334155;
   }
-  .dots i:first-child { background: #d98a8a; }
-  .dots i:nth-child(2) { background: #dcb86b; }
-  .dots i:nth-child(3) { background: #86b99a; }
+  .dots i:first-child { background: #f87171; }
+  .dots i:nth-child(2) { background: #fbbf24; }
+  .dots i:nth-child(3) { background: #34d399; }
   .browser-title {
     color: var(--muted);
     font-family: var(--mono);
@@ -278,7 +284,7 @@
     align-items: center;
     gap: 6px;
     margin-left: auto;
-    color: var(--green-dark);
+    color: #34d399;
     font-family: var(--mono);
     font-size: .62rem;
     font-weight: 700;
@@ -292,7 +298,7 @@
     border-radius: 50%;
     background: var(--green);
   }
-  .browser img { display: block; width: 100%; background: #eef2f7; }
+  .browser img { display: block; width: 100%; background: #070d18; }
   .float-card {
     position: absolute;
     left: -18px;
@@ -301,14 +307,14 @@
     align-items: center;
     gap: 12px;
     padding: 13px 17px 13px 13px;
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-dark);
     border-radius: 13px;
-    background: rgba(255, 255, 255, .96);
-    box-shadow: 0 12px 30px rgba(11, 18, 32, .16);
+    background: rgba(15, 23, 42, .92);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .45);
     color: var(--muted);
     font-size: .8rem;
     line-height: 1.3;
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(8px);
   }
   .float-card strong { color: var(--ink); }
   .float-icon {
@@ -318,8 +324,8 @@
     height: 34px;
     flex: 0 0 auto;
     border-radius: 50%;
-    background: #e4f3ea;
-    color: var(--green-dark);
+    background: rgba(16, 185, 129, .15);
+    color: var(--green);
     font-size: 1rem;
     font-weight: 900;
   }
@@ -360,7 +366,7 @@
   }
   .step {
     padding-top: 18px;
-    border-top: 2px solid var(--ink);
+    border-top: 2px solid var(--line-dark);
   }
   .step-num {
     display: block;
@@ -375,10 +381,10 @@
   .step p { margin-top: 10px; color: var(--muted); font-size: .94rem; }
   code {
     padding: 2px 6px;
-    border: 1px solid #cdd8e6;
+    border: 1px solid var(--line-dark);
     border-radius: 5px;
-    background: #f7fafd;
-    color: var(--blue-dark);
+    background: #0f172a;
+    color: var(--blue);
     font-family: var(--mono);
     font-size: .84em;
   }
@@ -386,7 +392,7 @@
   .print-section {
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
-    background: rgba(255, 255, 255, .5);
+    background: rgba(15, 23, 42, .45);
   }
   .print-grid {
     display: grid;
@@ -414,19 +420,20 @@
   }
   .print-paper {
     padding: 14px;
-    border: 1px solid #bfcbd9;
-    border-radius: 7px;
-    background: #fff;
-    box-shadow: 0 18px 40px rgba(11, 18, 32, .14);
-    transform: rotate(.6deg);
+    border: 1px solid var(--line-dark);
+    border-radius: 10px;
+    background: #0f172a;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
+    transform: none;
     transition: transform .25s ease;
   }
-  .print-paper:hover { transform: rotate(0); }
+  .print-paper:hover { transform: translateY(-2px); }
   .print-paper img {
     display: block;
     width: 100%;
-    border: 1px solid #e4e4e4;
-    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: #ffffff;
   }
   .print-paper figcaption {
     margin-top: 10px;
@@ -448,13 +455,14 @@
     padding: 26px 26px 24px;
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    background: rgba(255, 255, 255, .66);
-    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    background: rgba(15, 23, 42, .6);
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
   }
   .feature:hover {
     transform: translateY(-2px);
-    background: #fff;
-    box-shadow: 0 12px 28px rgba(11, 18, 32, .09);
+    background: #111e35;
+    border-color: var(--line-dark);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, .35);
   }
   .feature-icon {
     display: grid;
@@ -463,7 +471,7 @@
     height: 40px;
     margin-bottom: 17px;
     border-radius: 10px;
-    background: #e5eefb;
+    background: rgba(56, 189, 248, .12);
     color: var(--blue);
   }
   .feature-icon svg { width: 21px; height: 21px; }
@@ -476,8 +484,8 @@
     overflow: hidden;
     padding: 84px 0;
     background:
-      radial-gradient(700px 340px at 88% -8%, rgba(46, 158, 107, .28), transparent 62%),
-      radial-gradient(600px 400px at 0% 110%, rgba(43, 108, 190, .34), transparent 65%),
+      radial-gradient(700px 340px at 88% -8%, rgba(16, 185, 129, .2), transparent 62%),
+      radial-gradient(600px 400px at 0% 110%, rgba(56, 189, 248, .18), transparent 65%),
       var(--navy);
     color: #fff;
   }
@@ -513,9 +521,14 @@
     min-width: 0;
     min-height: 225px;
     padding: 24px;
-    border: 1px solid rgba(255, 255, 255, .2);
+    border: 1px solid rgba(255, 255, 255, .15);
     border-radius: var(--radius);
-    background: rgba(255, 255, 255, .06);
+    background: rgba(255, 255, 255, .05);
+    transition: transform .18s ease, border-color .18s ease;
+  }
+  .download-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, .3);
   }
   .download-card h3 { font-size: 1.08rem; }
   .download-card p { color: #c8d8ec; font-size: .88rem; }
@@ -529,11 +542,11 @@
   }
   .download-card .card-link:hover { text-decoration: underline; text-underline-offset: 3px; }
   .download-card--primary {
-    border-color: #fff;
-    background: #fff;
-    color: var(--ink);
+    border-color: var(--green);
+    background: #0d1e34;
+    color: #fff;
   }
-  .download-card--primary p { color: var(--muted); }
+  .download-card--primary p { color: #c8d8ec; }
   .download-card--primary .card-link {
     display: inline-flex;
     align-items: center;
@@ -551,8 +564,8 @@
     align-self: flex-start;
     padding: 4px 9px;
     border-radius: 999px;
-    background: #e4f3ea;
-    color: var(--green-dark);
+    background: rgba(16, 185, 129, .2);
+    color: #34d399;
     font-family: var(--mono);
     font-size: .58rem;
     font-weight: 700;
@@ -573,7 +586,7 @@
   /* Footer ----------------------------------------------------------- */
   .site-footer {
     padding: 30px 0 36px;
-    background: #f7fafd;
+    background: #050a14;
     border-top: 1px solid var(--line);
   }
   .footer-grid {
@@ -680,7 +693,6 @@
   <section class="hero">
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <p class="kicker">Per la scuola <span class="live" aria-hidden="true"></span> senza cloud</p>
         <h1>La cartina dei posti.<br><em>Senza cloud.</em></h1>
         <p class="lead">Crea la pianta della tua classe, sistema gli alunni e stampa. I file restano nella tua cartella: nessun account, nessun server, nessun dato che esce dal computer.</p>
         <div class="cta-row">
@@ -746,18 +758,19 @@
   <section class="section print-section">
     <div class="wrap print-grid">
       <div class="print-copy">
-        <p class="kicker">02 · La stampa</p>
-        <h2>Una cartina chiara.<br>Anche in bianco e nero.</h2>
-        <p>La mappa è vista dal docente: la lavagna è in basso, davanti a te. I posti sono numerati e le file sono etichettate, così la cartina resta leggibile anche quando finisce sul muro dell'aula.</p>
+        <p class="kicker">02 · Esportazione e stampa</p>
+        <h2>Una cartina chiara.<br>Per lo schermo e per la stampa.</h2>
+        <p>Scarica l’immagine ad alta risoluzione con un clic: in <strong>tema scuro</strong> per proiettarla sulla LIM o consultarla su tablet e smartphone, oppure in <strong>tema chiaro ottimizzato per la stampa A4 orizzontale</strong> (perfetta e nitida anche in bianco e nero).</p>
         <ul class="checks">
-          <li>PNG ad alta risoluzione, anche A4 orizzontale</li>
-          <li>Nomi, posti e banchi liberi sotto controllo</li>
-          <li>Tema chiaro per la stampa, scuro per lo schermo</li>
+          <li>Immagini PNG ad alta risoluzione pronte all’uso</li>
+          <li>Tema scuro per LIM, monitor e dispositivi digitali</li>
+          <li>Formato A4 orizzontale nitido per la stampa su carta</li>
+          <li>Nomi leggibili, posti numerati e lavagna ben visibile</li>
         </ul>
       </div>
       <figure class="print-paper">
         <img src="./anteprima-web.png" width="1400" height="990" loading="eager" decoding="async" alt="Esempio di cartina di classe stampata: banchi numerati, file e lavagna in basso.">
-        <figcaption>Anteprima di stampa · A4 orizzontale</figcaption>
+        <figcaption>Anteprima · Formato A4 orizzontale ad alta risoluzione</figcaption>
       </figure>
     </div>
   </section>

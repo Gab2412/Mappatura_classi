@@ -873,6 +873,25 @@
   }
 
   function updateFolderBanner() {
+    const ready = folderReady();
+    const blockedReason = app.noFileApi
+      ? 'Apri l\'app con Chrome o Edge per creare o aprire classi.'
+      : 'Prima scegli una cartella per i file.';
+
+    ['btn-new-class', 'btn-new-class-empty', 'btn-open-file', 'btn-open-classes'].forEach(function (id) {
+      const b = $(id);
+      if (b) {
+        b.disabled = !ready;
+        if (!ready) {
+          b.setAttribute('title', blockedReason);
+          b.setAttribute('aria-disabled', 'true');
+        } else {
+          b.removeAttribute('title');
+          b.removeAttribute('aria-disabled');
+        }
+      }
+    });
+
     if (app.noFileApi) {
       el.folderBanner.hidden = false;
       if (el.folderBannerTitle) el.folderBannerTitle.textContent = 'Serve Chrome o Edge';

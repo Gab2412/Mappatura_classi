@@ -114,6 +114,18 @@ body {
   color: var(--text);
 }
 
+.btn:disabled,
+.btn[disabled],
+.link-button:disabled,
+.link-button[disabled] {
+  opacity: .38 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  filter: grayscale(40%);
+  box-shadow: none !important;
+  transform: none !important;
+}
+
 /* ------------------------------------------------------------------ */
 /* Home                                                               */
 /* ------------------------------------------------------------------ */

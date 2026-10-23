@@ -30,6 +30,8 @@
 
 Cartina di Classe è un'app per docenti: disegna la pianta dei banchi, assegna gli alunni, esporta un PNG pronto per la stampa. È pensata per essere leggibile e usabile anche con poca vista, senza rinunciare a un'interfaccia semplice.
 
+> **Sviluppato con LLM agentici:** questo progetto è nato ed è stato sviluppato a quattro mani in stretta sinergia con modelli di intelligenza artificiale agentica (LLM): un esperimento concreto di collaborazione per creare uno strumento scolastico artigianale, pulito, etico e rigorosamente offline.
+
 ## In 30 secondi
 
 1. **Apri l'app** e scegli una cartella. Lì nasce `files/`, con tutto quello che serve.
@@ -70,21 +72,31 @@ Le versioni sono archiviate anche nelle **[Release](https://github.com/Gab2412/M
 
 > **Browser.** Per scegliere e scrivere in una cartella locale servono **Chrome** o **Edge**. Firefox e Safari non hanno questa funzione: l'app si apre, ma non può salvare i file. È un limite del browser, non dell'app.
 
-## Sviluppo
+## Sviluppo e compilazione
 
-Servono Node.js 18+ per la build HTML e Python 3.14 con `pywebview`, `pythonnet`, `PyInstaller` e `Pillow` per l'exe.
+> **Nota per i docenti:** se vuoi semplicemente usare Cartina di Classe **non devi installare né compilare nulla**: usa la [versione online](https://gab2412.github.io/Mappatura_classi/) oppure scarica il file `.exe` già pronto per l'uso.
 
-```bash
-node scripts/build.mjs                            # HTML in dist/ e docs/
-powershell -ExecutionPolicy Bypass -File desktop\build.ps1   # exe Windows
-node --test tests/core.test.mjs                   # test del modello dati
-python desktop/test_api.py                        # test del backend
-```
+Questa sezione è riservata a sviluppatori o a chi desidera modificare il codice sorgente e ricompilare i file da zero. Servono **Node.js 18+** (per unire HTML, CSS e JavaScript in un unico file autonomo) e **Python 3.14** (per creare l'eseguibile Windows).
 
-La cartella `docs/` è il sito pubblicato. La landing è [Gab2412.github.io/Mappatura_classi](https://gab2412.github.io/Mappatura_classi/), l'app è su `/app.html`; l'exe e il modello Excel sono i download. Pages pubblica `docs/` dal branch `main` (`.nojekyll` incluso).
+### Comandi utili
+
+- `node scripts/build.mjs`  
+  Legge tutti i file modulari e compila l'applicazione in un unico file HTML autonomo (`dist/Cartina-di-Classe.html` e `docs/app.html`).
+- `powershell -ExecutionPolicy Bypass -File desktop\build.ps1`  
+  Impacchetta l'applicazione desktop con PyInstaller e genera il file eseguibile autonomo `CartinaDiClasse.exe` (non richiede che l'utente abbia Python installato).
+- `node --test tests/core.test.mjs`  
+  Esegue la suite di test unitari sul motore dell'app (algoritmo di numerazione dei banchi, disposizione automatica, calcolo delle distanze e parser dei file).
+- `python desktop/test_api.py`  
+  Verifica il backend locale (lettura/scrittura file, cartella `files/`, spostamento nel cestino e gestione degli errori).
+
+### Pubblicazione del sito (`docs/`)
+La cartella `docs/` contiene il sito statico servito automaticamente da GitHub Pages:
+- `docs/index.html`: la pagina di presentazione (landing page).
+- `docs/app.html`: la web app completa e pronta all'uso.
+- `docs/CartinaDiClasse.exe` e `docs/Modello_Planimetria_Classi.xlsx`: i download diretti.
 
 Tutti i dettagli su comandi, struttura, import, stampa e accessibilità sono nella **[guida completa](GUIDA.md)**.
 
 ---
 
-<p align="center"><sub>Nessun account. Nessun cloud. Nessun tracciamento.</sub></p>
+<p align="center"><sub>Sviluppato in sinergia con LLM agentici · Nessun account · Nessun cloud · Nessun tracciamento.</sub></p>

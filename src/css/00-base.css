@@ -313,10 +313,14 @@ a {
   box-shadow: none;
 }
 
+.btn:disabled,
 .btn[disabled] {
-  opacity: .5;
+  opacity: .38;
   cursor: not-allowed;
-  transform: none;
+  pointer-events: none;
+  filter: grayscale(40%);
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 .btn-icon {

@@ -3,7 +3,7 @@
   Cartina di Classe — applicazione portatile in un solo file.
   Nessuna installazione, nessun account, nessuna connessione di rete.
   Tutti i dati restano nella cartella scelta («files»).
-  Generata il 2026-10-23T12:18:44.164Z
+  Generata il 2026-10-23T12:46:06.018Z
 -->
 
 <html lang="it" data-theme="dark">
@@ -328,10 +328,14 @@ a {
   box-shadow: none;
 }
 
+.btn:disabled,
 .btn[disabled] {
-  opacity: .5;
+  opacity: .38;
   cursor: not-allowed;
-  transform: none;
+  pointer-events: none;
+  filter: grayscale(40%);
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 .btn-icon {
@@ -2039,6 +2043,18 @@ body {
 
 .link-button:hover {
   color: var(--text);
+}
+
+.btn:disabled,
+.btn[disabled],
+.link-button:disabled,
+.link-button[disabled] {
+  opacity: .38 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  filter: grayscale(40%);
+  box-shadow: none !important;
+  transform: none !important;
 }
 
 /* ------------------------------------------------------------------ */
@@ -5891,8 +5907,9 @@ window.CC.TEMPLATE_XLSX_B64 = "UEsDBBQAAAAIACWAVV1Gx01IlwAAAM0AAAAQAAAAZG9jUHJvc
       if (rn.note) labelW = Math.max(labelW, measure(rn.note, 7.2, 600));
     }
     const labelGap = 18;
-    const contentW = labelGap + labelW + gridW;
-    const gridX = area.x + Math.max(0, (area.w - contentW) / 2) + labelGap + labelW;
+    const minLeft = area.x + labelGap + labelW;
+    const centeredX = area.x + (area.w - gridW) / 2;
+    const gridX = Math.max(minLeft, centeredX);
 
     const contentH = labelsTop + gridH + boardGap + boardBand;
     const extraY = Math.max(0, (area.h - contentH) / 2);
@@ -8484,6 +8501,25 @@ window.CC.TEMPLATE_XLSX_B64 = "UEsDBBQAAAAIACWAVV1Gx01IlwAAAM0AAAAQAAAAZG9jUHJvc
   }
 
   function updateFolderBanner() {
+    const ready = folderReady();
+    const blockedReason = app.noFileApi
+      ? 'Apri l\'app con Chrome o Edge per creare o aprire classi.'
+      : 'Prima scegli una cartella per i file.';
+
+    ['btn-new-class', 'btn-new-class-empty', 'btn-open-file', 'btn-open-classes'].forEach(function (id) {
+      const b = $(id);
+      if (b) {
+        b.disabled = !ready;
+        if (!ready) {
+          b.setAttribute('title', blockedReason);
+          b.setAttribute('aria-disabled', 'true');
+        } else {
+          b.removeAttribute('title');
+          b.removeAttribute('aria-disabled');
+        }
+      }
+    });
+
     if (app.noFileApi) {
       el.folderBanner.hidden = false;
       if (el.folderBannerTitle) el.folderBannerTitle.textContent = 'Serve Chrome o Edge';
