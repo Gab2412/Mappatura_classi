@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="it" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>Cartina di Classe</title>
+  <link rel="stylesheet" href="vendor/css/00-base.css">
+  <link rel="stylesheet" href="vendor/css/10-editor.css">
+  <link rel="stylesheet" href="vendor/css/20-map.css">
+  <link rel="stylesheet" href="vendor/css/30-dialogs.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-home">Vai al contenuto principale</a>
+
+  <div id="sr-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+
+  <!-- ============================================================== -->
+  <!-- HOME                                                            -->
+  <!-- ============================================================== -->
+  <section id="view-home" class="view view-home" aria-labelledby="home-title">
+    <header class="home-top">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">▦</span>
+        <div>
+          <h1 id="home-title">Le mie classi</h1>
+          <p class="brand-sub">Cartina di Classe</p>
+        </div>
+      </div>
+      <div class="home-top-actions">
+        <button type="button" id="btn-open-file" class="btn btn-ghost">Apri file…</button>
+        <button type="button" id="btn-home-settings" class="btn btn-ghost">Impostazioni</button>
+        <button type="button" id="btn-new-class" class="btn btn-green btn-xl">+ Nuova classe</button>
+      </div>
+    </header>
+
+    <main id="main-home" class="home-main">
+      <div id="folder-banner" class="folder-banner" hidden>
+        <p class="strong-label" id="folder-banner-title">Senza la cartella dei file l'app non può funzionare</p>
+        <p class="hint" id="folder-banner-text">Scegli la cartella in cui si trova questo file HTML: l'app crea lì la sottocartella <strong>files</strong> e vi salva le classi. Finché non la scegli, non è possibile creare o aprire classi.</p>
+        <button type="button" id="btn-choose-folder" class="btn btn-green btn-xl">Scegli la cartella…</button>
+      </div>
+
+      <div id="home-empty" class="empty-card" hidden>
+        <div class="empty-icon" aria-hidden="true">▦</div>
+        <h2>Non hai ancora nessuna classe</h2>
+        <p>Crea la prima classe: potrai aggiungere gli alunni e disporre i banchi in pochi passaggi.</p>
+        <button type="button" id="btn-new-class-empty" class="btn btn-green btn-xl">Crea la prima classe</button>
+      </div>
+
+      <ul id="class-list" class="class-list" aria-label="Elenco delle classi"></ul>
+
+      <p class="home-folder">
+        <button type="button" id="btn-open-classes" class="link-button">Apri la cartella delle classi</button>
+        <span id="data-dir" class="path-hint"></span>
+      </p>
+    </main>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- CLASSE                                                          -->
+  <!-- ============================================================== -->
+  <section id="view-class" class="view view-class" hidden aria-labelledby="class-title">
+    <header class="class-top">
+      <button type="button" id="btn-back" class="btn btn-ghost btn-back">← Le mie classi</button>
+      <div class="class-heading">
+        <h1 id="class-title" tabindex="-1">Classe</h1>
+        <span id="save-status" class="save-status" aria-live="polite">Salvato</span>
+      </div>
+      <div class="class-top-actions">
+        <button type="button" id="btn-undo" class="btn btn-ghost btn-history" disabled aria-label="Annulla l'ultima modifica" title="Annulla (Ctrl+Z)">↶</button>
+        <button type="button" id="btn-redo" class="btn btn-ghost btn-history" disabled aria-label="Ripeti la modifica annullata" title="Ripeti (Ctrl+Y)">↷</button>
+        <button type="button" id="btn-toggle-panel" class="btn btn-ghost btn-edit" aria-expanded="true" aria-pressed="true" aria-controls="side-panel"
+                title="Mostra o nascondi il pannello per modificare banchi e alunni"><span aria-hidden="true">✎</span> Modifica</button>
+        <button type="button" id="btn-rename-class" class="btn btn-amber">Rinomina</button>
+        <button type="button" id="btn-class-settings" class="btn btn-ghost">Impostazioni</button>
+      </div>
+    </header>
+
+    <div class="toolbar" role="toolbar" aria-label="Comandi principali">
+      <div class="toolbar-group">
+        <button type="button" id="btn-add-students" class="btn btn-green" title="Aggiungi gli alunni della classe, uno alla volta o incollando un elenco">Aggiungi alunni</button>
+        <button type="button" id="btn-edit-layout" class="btn btn-blue" title="Modifica il numero di file, colonne e i banchi per ogni cella">Quanti banchi</button>
+        <button type="button" id="btn-auto-assign" class="btn btn-cyan" title="Assegna automaticamente un banco libero agli alunni in ordine alfabetico (A→Z)">Disponi nei banchi</button>
+      </div>
+      <div class="toolbar-group toolbar-export">
+        <span class="toolbar-label">Esporta</span>
+        <button type="button" id="btn-export-light" class="btn btn-violet" title="Salva una immagine con sfondo chiaro, adatta alla stampa">Immagine chiara</button>
+        <button type="button" id="btn-export-dark" class="btn btn-indigo" title="Salva una immagine con sfondo scuro, adatta allo schermo">Immagine scura</button>
+        <button type="button" id="btn-print" class="btn btn-amber" title="Stampa la cartina in formato A4 orizzontale">Stampa</button>
+      </div>
+    </div>
+
+    <div class="class-body">
+      <main class="map-area" id="map-area" tabindex="0" aria-label="Mappa dei banchi. Usa la rotella per ingrandire, trascina per spostare.">
+        <div class="map-tools" role="group" aria-label="Ingrandimento della pianta">
+          <button type="button" id="map-zoom-out" class="btn btn-ghost map-tool" aria-label="Riduci la pianta" title="Riduci (rotella in giù)">−</button>
+          <button type="button" id="map-zoom-reset" class="btn btn-ghost map-tool map-tool-value" title="Torna alla dimensione normale">100%</button>
+          <button type="button" id="map-zoom-in" class="btn btn-ghost map-tool" aria-label="Ingrandisci la pianta" title="Ingrandisci (rotella in su)">+</button>
+        </div>
+        <div id="map-root" class="map-root"></div>
+      </main>
+
+      <div id="panel-resizer" class="panel-resizer" role="separator" aria-orientation="vertical" tabindex="0"
+           aria-label="Larghezza della colonna dei dati. Trascina o usa le frecce." title="Trascina per allargare la colonna dei dati"></div>
+
+      <aside id="side-panel" class="side-panel" aria-label="Dati della classe">
+        <!-- Banchi -->
+        <details id="panel-layout" class="panel-block">
+          <summary>
+            <span class="summary-title">Banchi</span>
+            <span id="layout-summary" class="summary-hint"></span>
+          </summary>
+          <div class="panel-content">
+            <p class="hint">La prima riga è l'ultima fila (fondo aula). L'ultima riga è la prima fila, davanti alla lavagna.</p>
+
+            <div class="row-inline size-row">
+              <label for="rows-input">File</label>
+              <input id="rows-input" type="number" min="1" max="20" step="1" inputmode="numeric" aria-label="Numero di file">
+              <label for="cols-input">Colonne</label>
+              <input id="cols-input" type="number" min="1" max="12" step="1" inputmode="numeric" aria-label="Numero di colonne">
+              <button type="button" id="btn-apply-size" class="btn btn-blue">Applica</button>
+            </div>
+
+            <div class="row-inline size-row windows-row">
+              <label for="windows-side">Finestre</label>
+              <select id="windows-side" title="Da che lato dell'aula sono le finestre: serve a riconoscere la disposizione">
+                <option value="none">Nessuna</option>
+                <option value="left">A sinistra</option>
+                <option value="right">A destra</option>
+              </select>
+            </div>
+
+            <details class="quick-entry">
+              <summary>Inserimento rapido</summary>
+              <label for="layout-text" class="strong-label">Banchi per cella, una riga per fila</label>
+              <textarea id="layout-text" rows="4" spellcheck="false" placeholder="2 3 2&#10;2 2 2&#10;2 2 1"></textarea>
+              <p class="hint">Numeri separati da spazio, virgola o /. Esempio: <code>2 3 2 / 2 2 2 / 2 2 1</code></p>
+              <button type="button" id="btn-apply-layout-text" class="btn btn-amber">Applica disposizione</button>
+            </details>
+
+            <div class="layout-table-wrap">
+              <table class="layout-table" aria-describedby="layout-help">
+                <caption class="sr-only">Numero di banchi per ogni cella. Usa i pulsanti meno e più.</caption>
+                <thead id="layout-head"></thead>
+                <tbody id="layout-body"></tbody>
+              </table>
+            </div>
+            <p id="layout-help" class="hint">Usa − e + per cambiare il numero di banchi in ogni cella. Le colonne seguono l'ordine da sinistra a destra.</p>
+            <button type="button" id="btn-clear-seats" class="btn btn-red">Svuota tutti i posti</button>
+          </div>
+        </details>
+
+        <!-- Alunni -->
+        <details id="panel-students" class="panel-block" open>
+          <summary>
+            <span class="summary-title">Alunni</span>
+            <span id="students-summary" class="summary-hint"></span>
+          </summary>
+          <div class="panel-content">
+            <div class="row-inline">
+              <button type="button" id="btn-open-add-students" class="btn btn-green">+ Aggiungi alunni</button>
+              <button type="button" id="btn-import" class="btn btn-violet">Importa da Excel/CSV…</button>
+            </div>
+
+            <div class="roster-tools">
+              <label for="student-search" class="sr-only">Cerca alunno</label>
+              <input id="student-search" type="search" placeholder="Cerca un alunno…" autocomplete="off">
+            </div>
+
+            <p id="roster-summary" class="roster-summary"></p>
+            <div class="roster-table-wrap">
+              <table class="roster-table">
+                <caption class="sr-only">Elenco degli alunni e del posto assegnato</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Alunno</th>
+                    <th scope="col">Posto</th>
+                    <th scope="col">Azioni</th>
+                  </tr>
+                </thead>
+                <tbody id="roster-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </details>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- DIALOGHI                                                        -->
+  <!-- ============================================================== -->
+
+  <dialog id="dialog-name" class="dialog dialog-small" aria-labelledby="name-dialog-title">
+    <form id="form-name" method="dialog" novalidate>
+      <div class="dialog-head">
+        <div>
+          <h2 id="name-dialog-title">Nuova classe</h2>
+          <p class="dialog-subtitle" id="name-dialog-subtitle">Scegli un nome riconoscibile, ad esempio 1A.</p>
+        </div>
+        <button type="button" class="dialog-close" data-close aria-label="Chiudi">×</button>
+      </div>
+      <div class="dialog-body">
+        <label for="name-input" class="strong-label">Nome della classe</label>
+        <input id="name-input" type="text" maxlength="80" autocomplete="off" placeholder="Es. 1A" required>
+        <p id="name-error" class="feedback error" role="alert"></p>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" data-close>Annulla</button>
+        <button type="submit" id="name-submit" class="btn btn-green">Crea classe</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dialog-desk" class="dialog dialog-small" aria-labelledby="desk-dialog-title">
+    <div class="dialog-head">
+      <div>
+        <h2 id="desk-dialog-title">Posto</h2>
+        <p class="dialog-subtitle" id="desk-location"></p>
+      </div>
+      <button type="button" class="dialog-close" data-close aria-label="Chiudi">×</button>
+    </div>
+    <div class="dialog-body">
+      <label for="desk-student" class="strong-label">Alunno in questo posto</label>
+      <select id="desk-student"></select>
+      <p id="desk-empty-hint" class="hint" hidden>Non ci sono ancora alunni: scrivi il nome qui sotto e premi <strong>Assegna</strong>.</p>
+      <p class="hint">Scegliendo un alunno già sistemato, i due posti vengono scambiati.</p>
+
+      <div id="desk-new-block" class="desk-new" hidden>
+        <label for="desk-new-name" class="strong-label">Oppure scrivi un nome nuovo</label>
+        <input id="desk-new-name" type="text" maxlength="80" autocomplete="off" placeholder="Es. Bianchi Anna">
+        <p class="hint">Premi <strong>Assegna</strong> (o Invio): l'alunno viene creato e messo in questo posto.</p>
+      </div>
+      <p id="desk-feedback" class="feedback" role="status" aria-live="polite"></p>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" id="btn-desk-clear" class="btn btn-red">Lascia libero</button>
+      <button type="button" id="btn-desk-assign" class="btn btn-green">Assegna</button>
+      <button type="button" class="btn btn-ghost" data-close>Chiudi</button>
+    </div>
+  </dialog>
+
+  <dialog id="dialog-assign" class="dialog dialog-small" aria-labelledby="assign-dialog-title">
+    <div class="dialog-head">
+      <div>
+        <h2 id="assign-dialog-title">Cambia posto</h2>
+        <p class="dialog-subtitle" id="assign-location"></p>
+      </div>
+      <button type="button" class="dialog-close" data-close aria-label="Chiudi">×</button>
+    </div>
+    <div class="dialog-body">
+      <label for="assign-seat" class="strong-label">Nuovo posto</label>
+      <select id="assign-seat"></select>
+      <p class="hint">I posti già occupati non sono elencati.</p>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" id="btn-assign-seat" class="btn btn-green">Assegna</button>
+      <button type="button" class="btn btn-ghost" data-close>Chiudi</button>
+    </div>
+  </dialog>
+
+  <dialog id="dialog-student" class="dialog dialog-small" aria-labelledby="student-dialog-title">
+    <div class="dialog-head">
+      <div>
+        <h2 id="student-dialog-title">Alunno</h2>
+        <p class="dialog-subtitle" id="student-location"></p>
+      </div>
+      <button type="button" class="dialog-close" data-close aria-label="Chiudi">×</button>
+    </div>
+    <div class="dialog-body">
+      <label for="student-name-input" class="strong-label">Nome e cognome</label>
+      <input id="student-name-input" type="text" maxlength="80" autocomplete="off">
+      <p id="student-error" class="feedback error" role="alert"></p>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" id="btn-remove-student" class="btn btn-red">Rimuovi alunno</button>
+      <button type="button" id="btn-save-student" class="btn btn-green">Salva nome</button>
+      <button type="button" class="btn btn-ghost" data-close>Chiudi</button>
+    </div>
+  </dialog>
+
+  <dialog id="dialog-settings" class="dialog dialog-small" aria-labelledby="settings-title">
+    <form method="dialog">
+      <div class="dialog-head">
+        <div>
+          <h2 id="settings-title">Impostazioni</h2>
+          <p class="dialog-subtitle">Le modifiche si vedono subito.</p>
+        </div>
+        <button type="button" class="dialog-close" data-close aria-label="Chiudi">×</button>
+      </div>
+      <div class="dialog-body settings-body">
+        <fieldset>
+          <legend>Aspetto</legend>
+          <div class="segmented" role="radiogroup" aria-label="Tema">
+            <label><input type="radio" name="theme" value="dark"> Scuro</label>
+            <label><input type="radio" name="theme" value="light"> Chiaro</label>
+            <label><input type="radio" name="theme" value="auto"> Automatico</label>
+          </div>
+          <label for="text-size" class="strong-label range-label">Dimensione del testo: <output id="text-size-out">22</output> px</label>
+          <input id="text-size" type="range" min="16" max="32" step="1">
+        </fieldset>
+
+        <fieldset>
+          <legend>Mappa</legend>
+          <label class="check-line"><input id="show-numbers" type="checkbox"> Mostra il numero del posto</label>
+          <label class="check-line"><input id="show-empty" type="checkbox"> Scrivi «libero» sui banchi vuoti</label>
+          <label for="name-mode" class="strong-label">Nomi visualizzati</label>
+          <select id="name-mode">
+            <option value="full">Nome e cognome</option>
+            <option value="first">Solo nome</option>
+            <option value="last">Solo cognome</option>
+            <option value="initials">Iniziali</option>
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <legend>Esportazione</legend>
+          <label for="image-ratio" class="strong-label">Formato delle immagini</label>
+          <select id="image-ratio">
+            <option value="auto">Adatta al disegno (schermo)</option>
+            <option value="a4">Foglio A4 orizzontale (stampa)</option>
+          </select>
+          <label for="export-dpi" class="strong-label">Qualità delle immagini</label>
+          <select id="export-dpi">
+            <option value="150">Normale (150 DPI)</option>
+            <option value="300">Alta (300 DPI)</option>
+            <option value="600">Massima (600 DPI)</option>
+          </select>
+          <p class="hint">Le immagini vengono salvate nella cartella <strong>Esportazioni</strong>. La stampa usa sempre il foglio A4.</p>
+        </fieldset>
+
+        <div class="settings-links">
+          <button type="button" id="btn-open-classes-2" class="link-button">Apri cartella classi</button>
+          <button type="button" id="btn-open-exports" class="link-button">Apri cartella esportazioni</button>
+          <button type="button" id="btn-open-log" class="link-button">Apri registro diagnostico</button>
+        </div>
+      </div>
+      <div class="dialog-actions">
+        <button type="submit" class="btn btn-green">Chiudi</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dialog-import" class="dialog dialog-wide" aria-labelledby="import-title">
+    <div class="dialog-head">
+      <div>
+        <h2 id="import-title">Importa da Excel o CSV</h2>
+        <p class="dialog-subtitle">Controlla cosa è stato trovato prima di applicare.</p>
+      </div>
+      <button type="button" class="dialog-close" data-close aria-label="Chiudi">×</button>
+    </div>
+    <div class="dialog-body" id="import-body"></div>
+    <div class="dialog-actions" id="import-actions"></div>
+  </dialog>
+
+  <dialog id="dialog-confirm" class="dialog dialog-small" aria-labelledby="confirm-title">
+    <div class="dialog-head">
+      <div>
+        <h2 id="confirm-title">Confermi?</h2>
+        <p class="dialog-subtitle">Questa operazione può essere annullata con «Annulla».</p>
+      </div>
+      <button type="button" class="dialog-close" data-close aria-label="Chiudi">×</button>
+    </div>
+    <div class="dialog-body">
+      <p id="confirm-message"></p>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" id="confirm-cancel" class="btn btn-ghost">Annulla</button>
+      <button type="button" id="confirm-ok" class="btn btn-red">Conferma</button>
+    </div>
+  </dialog>
+
+  <!-- Aggiungi alunni (schermata di inserimento) -->
+  <dialog id="dialog-add-students" class="dialog" aria-labelledby="add-students-title">
+    <div class="dialog-head">
+      <div>
+        <h2 id="add-students-title">Aggiungi alunni</h2>
+        <p class="dialog-subtitle" id="add-students-subtitle">Scrivi un nome e premi «Aggiungi».</p>
+      </div>
+      <button type="button" class="dialog-close" data-close aria-label="Chiudi">×</button>
+    </div>
+    <div class="dialog-body">
+      <label for="quick-name" class="strong-label">Nome e cognome</label>
+      <div class="quick-add-row">
+        <input id="quick-name" type="text" maxlength="80" autocomplete="off" placeholder="Es. Bianchi Anna">
+        <button type="button" id="btn-quick-add" class="btn btn-green">Aggiungi</button>
+      </div>
+      <p id="quick-add-feedback" class="feedback" role="status" aria-live="polite"></p>
+      <ul id="quick-added-list" class="quick-added-list" aria-label="Alunni appena aggiunti"></ul>
+
+      <details class="quick-entry">
+        <summary>Aggiungi più nomi insieme</summary>
+        <label for="students-input" class="strong-label">Un nome per riga</label>
+        <textarea id="students-input" rows="6" placeholder="Un nome per riga&#10;Es. Bianchi Anna"></textarea>
+        <p class="hint">Puoi incollare un elenco copiato da un foglio di calcolo.</p>
+        <button type="button" id="btn-add-names" class="btn btn-green">Aggiungi nomi</button>
+      </details>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" id="btn-import-2" class="btn btn-violet">Importa da Excel/CSV…</button>
+      <button type="button" class="btn btn-ghost" data-close>Fine</button>
+    </div>
+  </dialog>
+
+  <!-- Nuova classe guidata -->
+  <dialog id="dialog-wizard" class="dialog dialog-wide" aria-labelledby="wizard-title">
+    <div class="dialog-head">
+      <div>
+        <h2 id="wizard-title">Nuova classe</h2>
+        <p class="dialog-subtitle" id="wizard-step-label">Passo 1 di 3 · Nome</p>
+      </div>
+      <button type="button" class="dialog-close" data-close aria-label="Chiudi">×</button>
+    </div>
+    <div class="wizard-progress" aria-hidden="true">
+      <span class="wizard-dot" data-step="1">1</span>
+      <span class="wizard-dot" data-step="2">2</span>
+      <span class="wizard-dot" data-step="3">3</span>
+    </div>
+    <div class="dialog-body wizard-body">
+      <section class="wizard-step" data-step="1">
+        <label for="wiz-name" class="strong-label">Come si chiama la classe?</label>
+        <input id="wiz-name" type="text" maxlength="80" autocomplete="off" placeholder="Es. 1A">
+        <p class="hint">Scegli un nome riconoscibile: apparirà nella home e in cima alla cartina.</p>
+        <p id="wiz-name-error" class="feedback error" role="alert"></p>
+      </section>
+      <section class="wizard-step" data-step="2" hidden>
+        <div class="aula-layout">
+          <div class="aula-fields">
+            <h3 class="strong-label aula-fields-title">Dimensioni aula</h3>
+            <div class="aula-field">
+              <label for="wiz-rows">File</label>
+              <input id="wiz-rows" type="number" min="1" max="20" step="1" inputmode="numeric" aria-label="Numero di file">
+            </div>
+            <div class="aula-field">
+              <label for="wiz-cols">Colonne</label>
+              <input id="wiz-cols" type="number" min="1" max="12" step="1" inputmode="numeric" aria-label="Numero di colonne">
+            </div>
+            <div class="aula-field aula-field-sep">
+              <label for="wiz-windows">Finestre</label>
+              <select id="wiz-windows" aria-label="Posizione delle finestre nell'aula">
+                <option value="none">Nessuna</option>
+                <option value="left">A sinistra</option>
+                <option value="right">A destra</option>
+              </select>
+            </div>
+            <p id="wiz-layout-preview" class="wizard-preview" role="status" aria-live="polite"></p>
+          </div>
+
+          <div class="aula-plan-col">
+            <div class="aula-plan-header">
+              <h3 class="strong-label aula-plan-title">Composizione della matrice</h3>
+              <p class="hint">Scrivi quanti banchi ci sono in ciascuna cella (0 = spazio vuoto). In alto il fondo aula, in basso la cattedra.</p>
+            </div>
+            <div id="wiz-aula" class="aula-plan">
+              <div id="wiz-side-left" class="aula-side" hidden>Finestre</div>
+              <div class="aula-center">
+                <p class="aula-plan-head">Fondo aula</p>
+                <div id="wiz-grid" class="aula-grid"></div>
+                <div class="aula-board">Lavagna · cattedra</div>
+              </div>
+              <div id="wiz-side-right" class="aula-side" hidden>Finestre</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="wizard-step" data-step="3" hidden>
+        <label for="wiz-students" class="strong-label">Alunni della classe (facoltativo)</label>
+        <textarea id="wiz-students" rows="7" placeholder="Un nome per riga&#10;Es. Bianchi Anna"></textarea>
+        <p class="hint">Puoi anche lasciare vuoto e aggiungerli dopo con «Aggiungi alunni».</p>
+      </section>
+    </div>
+    <div class="dialog-actions wizard-actions">
+      <button type="button" id="wiz-back" class="btn btn-ghost">← Indietro</button>
+      <button type="button" id="wiz-next" class="btn btn-green">Avanti →</button>
+      <button type="button" id="wiz-create" class="btn btn-green" hidden>Crea la classe</button>
+      <button type="button" class="btn btn-ghost" data-close>Annulla</button>
+    </div>
+  </dialog>
+
+  <!-- Immagine salvata -->
+  <dialog id="dialog-exported" class="dialog dialog-small" aria-labelledby="exported-title">
+    <div class="dialog-head">
+      <div>
+        <h2 id="exported-title">Immagine salvata</h2>
+        <p class="dialog-subtitle">Il file è nella cartella Esportazioni.</p>
+      </div>
+      <button type="button" class="dialog-close" data-close aria-label="Chiudi">×</button>
+    </div>
+    <div class="dialog-body">
+      <p class="strong-label" id="exported-name"></p>
+      <p class="hint" id="exported-info"></p>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" id="btn-open-image" class="btn btn-blue">Apri immagine</button>
+      <button type="button" id="btn-open-exports-2" class="btn btn-ghost">Apri cartella</button>
+      <button type="button" class="btn btn-green" data-close>Chiudi</button>
+    </div>
+  </dialog>
+
+  <script src="vendor/js/00-core.js"></script>
+  <script src="vendor/js/05-template.js"></script>
+  <script src="vendor/js/10-store.js"></script>
+  <script src="vendor/js/20-map.js"></script>
+  <script src="vendor/js/30-editor.js"></script>
+  <script src="vendor/js/40-export.js"></script>
+  <script src="vendor/js/50-import.js"></script>
+  <script src="js/web-api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

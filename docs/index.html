@@ -1,0 +1,884 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cartina di Classe — la pianta dei posti, senza cloud</title>
+<meta name="description" content="Crea la cartina dei posti della tua classe, sistema gli alunni e stampa. I file restano nella tua cartella: nessun account, nessun cloud.">
+<meta name="theme-color" content="#eef2f7">
+<link rel="icon" href="./icona.png">
+<style>
+  :root {
+    --ink: #0b1220;
+    --muted: #46556b;
+    --blue: #003f8f;
+    --blue-dark: #002d66;
+    --green: #146c43;
+    --green-dark: #0f5132;
+    --bg: #eef2f7;
+    --paper: #fffdf8;
+    --line: #c8d3e1;
+    --line-dark: #9fb0c6;
+    --navy: #072a55;
+    --radius: 16px;
+    --font: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --mono: "Cascadia Mono", Consolas, "Courier New", monospace;
+    --shadow: 0 24px 60px rgba(11, 18, 32, .15);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    color: var(--ink);
+    background:
+      radial-gradient(900px 520px at 88% -12%, rgba(0, 63, 143, .11), transparent 62%),
+      linear-gradient(180deg, #f7fafd 0%, var(--bg) 48%, #e6edf5 100%);
+    font-family: var(--font);
+    font-size: 17px;
+    line-height: 1.55;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto;
+    height: 4px;
+    background: linear-gradient(90deg, var(--blue) 0%, var(--blue) 55%, var(--green) 100%);
+    z-index: 20;
+  }
+  ::selection { background: #cfe1ff; }
+  a { color: var(--blue); }
+  img { max-width: 100%; height: auto; }
+  p, h1, h2, h3, figure { margin: 0; }
+  h1, h2, h3 { text-wrap: balance; }
+  h1, h2 { letter-spacing: -.045em; line-height: 1.02; }
+  h3 { letter-spacing: -.02em; line-height: 1.2; }
+  .wrap { width: min(1120px, calc(100% - 44px)); margin: 0 auto; }
+  .skip {
+    position: absolute;
+    left: 16px;
+    top: -80px;
+    z-index: 30;
+    padding: 12px 18px;
+    border-radius: 8px;
+    background: #fff;
+    color: var(--ink);
+    font-weight: 800;
+    box-shadow: var(--shadow);
+  }
+  .skip:focus { top: 16px; }
+  :focus-visible { outline: 3px solid #005fcc; outline-offset: 3px; }
+
+  /* Header ----------------------------------------------------------- */
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 22px 0;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 800;
+    letter-spacing: -.02em;
+  }
+  .brand-mark {
+    display: block;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 auto;
+    overflow: hidden;
+    border-radius: 9px;
+    box-shadow: 0 3px 10px rgba(11, 18, 32, .14);
+  }
+  .brand-mark svg { display: block; width: 100%; height: 100%; }
+  .brand-mark--small { width: 28px; height: 28px; border-radius: 7px; box-shadow: none; }
+  .brand span { font-size: 1.02rem; }
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    margin-left: auto;
+  }
+  .nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: .92rem;
+    font-weight: 700;
+  }
+  .nav a:hover { color: var(--ink); }
+  .nav .header-cta {
+    min-height: 42px;
+    padding: 0 18px;
+    border: 2px solid var(--blue);
+    border-radius: 10px;
+    color: var(--blue);
+  }
+  .nav .header-cta:hover { background: var(--blue); color: #fff; }
+
+  /* Hero ------------------------------------------------------------- */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 42px 0 64px;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(0, 63, 143, .16) 1px, transparent 1px);
+    background-size: 22px 22px;
+    opacity: .45;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
+    mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
+  }
+  .hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: .92fr 1.08fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .hero-grid > * { min-width: 0; }
+  .kicker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    color: var(--blue);
+    font-family: var(--mono);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+  }
+  .kicker::before {
+    content: "";
+    width: 20px;
+    height: 2px;
+    background: currentColor;
+  }
+  .kicker .live {
+    width: 7px;
+    height: 7px;
+    margin-left: 2px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 4px rgba(20, 108, 67, .14);
+  }
+  h1 {
+    max-width: 720px;
+    font-size: clamp(3.1rem, 6.2vw, 5.5rem);
+    font-weight: 800;
+  }
+  h1 em {
+    color: var(--blue);
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -.03em;
+  }
+  .lead {
+    max-width: 500px;
+    margin-top: 24px;
+    color: var(--muted);
+    font-size: clamp(1.02rem, 1.5vw, 1.16rem);
+    line-height: 1.58;
+  }
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 30px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 0 24px;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 800;
+    text-decoration: none;
+    transition: background .18s ease, border-color .18s ease, color .18s ease, transform .18s ease, box-shadow .18s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary {
+    background: var(--green);
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(20, 108, 67, .22);
+  }
+  .btn-primary:hover { background: var(--green-dark); box-shadow: 0 12px 26px rgba(20, 108, 67, .28); }
+  .btn-quiet {
+    border-color: var(--line-dark);
+    background: rgba(255, 255, 255, .52);
+    color: var(--ink);
+  }
+  .btn-quiet:hover { border-color: var(--ink); background: #fff; }
+  .btn-light {
+    background: #fff;
+    color: var(--blue);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .16);
+  }
+  .btn-light:hover { background: #eaf2ff; }
+  .micro {
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: .82rem;
+  }
+
+  .hero-visual { position: relative; min-width: 0; }
+  .browser {
+    overflow: hidden;
+    min-width: 0;
+    border: 1px solid #b7c6d8;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: var(--shadow);
+  }
+  .browser-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 38px;
+    padding: 0 13px;
+    border-bottom: 1px solid #dbe4ee;
+    background: #f5f8fc;
+  }
+  .dots { display: inline-flex; gap: 5px; }
+  .dots i {
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #c6d2e0;
+  }
+  .dots i:first-child { background: #d98a8a; }
+  .dots i:nth-child(2) { background: #dcb86b; }
+  .dots i:nth-child(3) { background: #86b99a; }
+  .browser-title {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: .68rem;
+    letter-spacing: .04em;
+  }
+  .browser-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    color: var(--green-dark);
+    font-family: var(--mono);
+    font-size: .62rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .browser-badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+  .browser img { display: block; width: 100%; background: #eef2f7; }
+  .float-card {
+    position: absolute;
+    left: -18px;
+    bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 17px 13px 13px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    background: rgba(255, 255, 255, .96);
+    box-shadow: 0 12px 30px rgba(11, 18, 32, .16);
+    color: var(--muted);
+    font-size: .8rem;
+    line-height: 1.3;
+    backdrop-filter: blur(6px);
+  }
+  .float-card strong { color: var(--ink); }
+  .float-icon {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: #e4f3ea;
+    color: var(--green-dark);
+    font-size: 1rem;
+    font-weight: 900;
+  }
+
+  /* Trust strip ------------------------------------------------------ */
+  .trust {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 26px;
+    padding: 17px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+    font-size: .8rem;
+    font-weight: 700;
+  }
+  .trust span { display: inline-flex; align-items: center; gap: 8px; }
+  .trust span::before {
+    content: "✓";
+    color: var(--green);
+    font-weight: 900;
+  }
+
+  /* Sections --------------------------------------------------------- */
+  .section { padding: 88px 0; }
+  .section-head { max-width: 760px; margin-bottom: 42px; }
+  h2 { font-size: clamp(2rem, 3.8vw, 3.3rem); font-weight: 800; }
+  .section-head p:not(.kicker) {
+    max-width: 620px;
+    margin-top: 16px;
+    color: var(--muted);
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  .step {
+    padding-top: 18px;
+    border-top: 2px solid var(--ink);
+  }
+  .step-num {
+    display: block;
+    margin-bottom: 22px;
+    color: var(--blue);
+    font-family: var(--mono);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+  }
+  .step h3 { font-size: 1.18rem; }
+  .step p { margin-top: 10px; color: var(--muted); font-size: .94rem; }
+  code {
+    padding: 2px 6px;
+    border: 1px solid #cdd8e6;
+    border-radius: 5px;
+    background: #f7fafd;
+    color: var(--blue-dark);
+    font-family: var(--mono);
+    font-size: .84em;
+  }
+
+  .print-section {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: rgba(255, 255, 255, .5);
+  }
+  .print-grid {
+    display: grid;
+    grid-template-columns: .9fr 1.1fr;
+    gap: 64px;
+    align-items: center;
+  }
+  .print-grid > * { min-width: 0; }
+  .print-copy p { max-width: 480px; margin-top: 18px; color: var(--muted); }
+  .checks {
+    display: grid;
+    gap: 10px;
+    margin: 25px 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--ink);
+    font-size: .92rem;
+    font-weight: 700;
+  }
+  .checks li { display: flex; gap: 10px; align-items: baseline; }
+  .checks li::before {
+    content: "✓";
+    color: var(--green);
+    font-weight: 900;
+  }
+  .print-paper {
+    padding: 14px;
+    border: 1px solid #bfcbd9;
+    border-radius: 7px;
+    background: #fff;
+    box-shadow: 0 18px 40px rgba(11, 18, 32, .14);
+    transform: rotate(.6deg);
+    transition: transform .25s ease;
+  }
+  .print-paper:hover { transform: rotate(0); }
+  .print-paper img {
+    display: block;
+    width: 100%;
+    border: 1px solid #e4e4e4;
+    background: #fff;
+  }
+  .print-paper figcaption {
+    margin-top: 10px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: .62rem;
+    letter-spacing: .04em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .features { background: transparent; }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .feature {
+    padding: 26px 26px 24px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, .66);
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  .feature:hover {
+    transform: translateY(-2px);
+    background: #fff;
+    box-shadow: 0 12px 28px rgba(11, 18, 32, .09);
+  }
+  .feature-icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 17px;
+    border-radius: 10px;
+    background: #e5eefb;
+    color: var(--blue);
+  }
+  .feature-icon svg { width: 21px; height: 21px; }
+  .feature h3 { font-size: 1.08rem; }
+  .feature p { margin-top: 9px; color: var(--muted); font-size: .92rem; }
+
+  /* Download --------------------------------------------------------- */
+  .download {
+    position: relative;
+    overflow: hidden;
+    padding: 84px 0;
+    background:
+      radial-gradient(700px 340px at 88% -8%, rgba(46, 158, 107, .28), transparent 62%),
+      radial-gradient(600px 400px at 0% 110%, rgba(43, 108, 190, .34), transparent 65%),
+      var(--navy);
+    color: #fff;
+  }
+  .download::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(255, 255, 255, .12) 1px, transparent 1px);
+    background-size: 24px 24px;
+    opacity: .25;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 45%, #000);
+    mask-image: linear-gradient(90deg, transparent, #000 45%, #000);
+  }
+  .download .wrap { position: relative; z-index: 1; }
+  .kicker.light { color: #a9c9f4; }
+  .download h2 { max-width: 700px; color: #fff; }
+  .download-lead {
+    max-width: 610px;
+    margin-top: 16px;
+    color: #c8d8ec;
+  }
+  .download-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 40px;
+  }
+  .download-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+    min-height: 225px;
+    padding: 24px;
+    border: 1px solid rgba(255, 255, 255, .2);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, .06);
+  }
+  .download-card h3 { font-size: 1.08rem; }
+  .download-card p { color: #c8d8ec; font-size: .88rem; }
+  .download-card .card-link {
+    margin-top: auto;
+    padding-top: 14px;
+    color: #fff;
+    font-weight: 800;
+    text-decoration: none;
+    font-size: .9rem;
+  }
+  .download-card .card-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .download-card--primary {
+    border-color: #fff;
+    background: #fff;
+    color: var(--ink);
+  }
+  .download-card--primary p { color: var(--muted); }
+  .download-card--primary .card-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: 9px;
+    background: var(--green);
+    color: #fff;
+    text-decoration: none;
+  }
+  .download-card--primary .card-link:hover { background: var(--green-dark); text-decoration: none; }
+  .tag {
+    align-self: flex-start;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: #e4f3ea;
+    color: var(--green-dark);
+    font-family: var(--mono);
+    font-size: .58rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .browser-note {
+    max-width: 760px;
+    margin-top: 30px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, .18);
+    color: #b9cbe1;
+    font-size: .82rem;
+  }
+  .browser-note strong { color: #fff; }
+  .download :focus-visible { outline-color: #9cc8ff; }
+
+  /* Footer ----------------------------------------------------------- */
+  .site-footer {
+    padding: 30px 0 36px;
+    background: #f7fafd;
+    border-top: 1px solid var(--line);
+  }
+  .footer-grid {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+  }
+  .footer-grid > * { min-width: 0; }
+  .footer-brand { display: flex; align-items: center; gap: 10px; }
+  .footer-brand img { width: 28px; height: 28px; border-radius: 7px; }
+  .footer-brand strong { font-size: .92rem; }
+  .footer-brand small { display: block; color: var(--muted); font-size: .74rem; }
+  .footer-copy { color: var(--muted); font-size: .78rem; text-align: center; }
+  .footer-links { display: flex; align-items: center; gap: 18px; font-size: .8rem; font-weight: 700; }
+  .footer-links a { color: var(--muted); text-decoration: none; }
+  .footer-links a:hover { color: var(--ink); }
+  .version {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: .64rem;
+    letter-spacing: .06em;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 44px; }
+    .hero-copy { max-width: 760px; }
+    .hero-visual { max-width: 760px; }
+    .lead { max-width: 640px; }
+    .print-grid { grid-template-columns: 1fr; gap: 40px; }
+    .print-copy p { max-width: 640px; }
+    .print-paper { max-width: 720px; }
+    .download-grid { grid-template-columns: repeat(2, 1fr); }
+    .download-card { min-height: 200px; }
+  }
+  @media (max-width: 720px) {
+    .wrap { width: min(100% - 30px, 1120px); }
+    .site-header { padding: 16px 0; }
+    .nav { gap: 14px; }
+    .nav a:not(.header-cta) { display: none; }
+    .nav .header-cta { min-height: 38px; padding: 0 13px; font-size: .82rem; }
+    .hero { padding: 30px 0 46px; }
+    .hero-grid { gap: 34px; }
+    h1 { font-size: clamp(2.85rem, 13vw, 4rem); }
+    .lead { font-size: 1rem; }
+    .cta-row { flex-direction: column; align-items: stretch; }
+    .btn { width: 100%; }
+    .float-card { display: none; }
+    .trust { gap: 8px 18px; font-size: .74rem; }
+    .section { padding: 60px 0; }
+    .section-head { margin-bottom: 30px; }
+    .steps { grid-template-columns: 1fr; gap: 24px; }
+    .step { padding-top: 14px; }
+    .step-num { margin-bottom: 12px; }
+    .print-grid { gap: 28px; }
+    .print-paper { transform: none; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .download { padding: 62px 0; }
+    .download-grid { grid-template-columns: 1fr; }
+    .download-card { min-height: 0; }
+    .footer-grid { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .footer-copy { text-align: left; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition: none !important; }
+    .btn:hover, .feature:hover, .print-paper:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Vai al contenuto</a>
+
+<header class="site-header wrap">
+  <a class="brand" href="./" aria-label="Cartina di Classe, home">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 40 40" role="img" focusable="false">
+        <rect width="40" height="40" rx="10" fill="#003f8f"/>
+        <g fill="#fff">
+          <rect x="9" y="8" width="6" height="5" rx="1"/>
+          <rect x="17" y="8" width="6" height="5" rx="1"/>
+          <rect x="25" y="8" width="6" height="5" rx="1"/>
+          <rect x="9" y="16" width="6" height="5" rx="1"/>
+          <rect x="17" y="16" width="6" height="5" rx="1"/>
+          <rect x="25" y="16" width="6" height="5" rx="1"/>
+          <rect x="9" y="24" width="6" height="5" rx="1"/>
+          <rect x="17" y="24" width="6" height="5" rx="1"/>
+          <rect x="25" y="24" width="6" height="5" rx="1"/>
+        </g>
+        <rect x="9" y="32.5" width="22" height="1.8" rx=".9" fill="#7dd3a7"/>
+      </svg>
+    </span>
+    <span>Cartina di Classe</span>
+  </a>
+  <nav class="nav" aria-label="Principale">
+    <a href="#come-funziona">Come funziona</a>
+    <a href="#download">Download</a>
+    <a class="header-cta" href="./app.html">Apri l'app</a>
+  </nav>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="kicker">Per la scuola <span class="live" aria-hidden="true"></span> senza cloud</p>
+        <h1>La cartina dei posti.<br><em>Senza cloud.</em></h1>
+        <p class="lead">Crea la pianta della tua classe, sistema gli alunni e stampa. I file restano nella tua cartella: nessun account, nessun server, nessun dato che esce dal computer.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="./app.html">Apri l'app <span aria-hidden="true">→</span></a>
+          <a class="btn btn-quiet" href="#come-funziona">Come funziona</a>
+        </div>
+        <p class="micro">Consigliato Chrome o Edge · Nessuna installazione</p>
+      </div>
+
+      <div class="hero-visual">
+        <div class="browser">
+          <div class="browser-bar">
+            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="browser-title">Cartina di Classe</span>
+            <span class="browser-badge">locale</span>
+          </div>
+          <img src="./app.png" width="1440" height="1000" alt="Schermata dell'app: la mappa dei banchi di una classe con l'elenco degli alunni a destra.">
+        </div>
+        <div class="float-card">
+          <span class="float-icon" aria-hidden="true">✓</span>
+          <span><strong>I tuoi file.</strong><br>Niente cloud.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="trust" aria-label="Caratteristiche principali">
+      <span>Nessun account</span>
+      <span>Nessun cloud</span>
+      <span>File JSON leggibili</span>
+      <span>Accessibile da tastiera</span>
+    </div>
+  </div>
+
+  <section class="section" id="come-funziona">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">01 · Tre passi</p>
+        <h2>Dalla classe alla stampa,<br>senza farsi domande.</h2>
+        <p>La prima volta scegli una cartella. Da lì in poi l'app la ricorda: classi, immagini e impostazioni restano lì.</p>
+      </div>
+      <div class="steps">
+        <article class="step">
+          <span class="step-num" aria-hidden="true">01</span>
+          <h3>Apri e scegli la cartella</h3>
+          <p>L'app crea una cartella <code>files</code> e mette lì tutto: un file JSON per classe, le esportazioni, il cestino.</p>
+        </article>
+        <article class="step">
+          <span class="step-num" aria-hidden="true">02</span>
+          <h3>Crea la classe</h3>
+          <p>Nome, aula, alunni. La procedura guidata prepara i banchi e li riempie in ordine alfabetico.</p>
+        </article>
+        <article class="step">
+          <span class="step-num" aria-hidden="true">03</span>
+          <h3>Stampa o condividi</h3>
+          <p>Un PNG pronto per la stampa, oppure il file della classe da passare a un collega. Senza esportare niente in cloud.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section print-section">
+    <div class="wrap print-grid">
+      <div class="print-copy">
+        <p class="kicker">02 · La stampa</p>
+        <h2>Una cartina chiara.<br>Anche in bianco e nero.</h2>
+        <p>La mappa è vista dal docente: la lavagna è in basso, davanti a te. I posti sono numerati e le file sono etichettate, così la cartina resta leggibile anche quando finisce sul muro dell'aula.</p>
+        <ul class="checks">
+          <li>PNG ad alta risoluzione, anche A4 orizzontale</li>
+          <li>Nomi, posti e banchi liberi sotto controllo</li>
+          <li>Tema chiaro per la stampa, scuro per lo schermo</li>
+        </ul>
+      </div>
+      <figure class="print-paper">
+        <img src="./anteprima-web.png" width="1400" height="990" loading="eager" decoding="async" alt="Esempio di cartina di classe stampata: banchi numerati, file e lavagna in basso.">
+        <figcaption>Anteprima di stampa · A4 orizzontale</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section features">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">03 · Pensata per la scuola</p>
+        <h2>Meno cose da spiegare.<br>Più tempo per la classe.</h2>
+      </div>
+      <div class="feature-grid">
+        <article class="feature">
+          <span class="feature-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H10l2 2h7.5A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5Z"/></svg>
+          </span>
+          <h3>I tuoi file, non i nostri</h3>
+          <p>Classi in JSON, immagini in <code>Esportazioni</code>. Per fare un backup basta copiare la cartella. Nessun account da ricordare.</p>
+        </article>
+        <article class="feature">
+          <span class="feature-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/></svg>
+          </span>
+          <h3>Leggibile davvero</h3>
+          <p>Testi grandi, contrasto alto, tema chiaro o scuro. Tutto si raggiunge da tastiera: utile per chi lavora con calma o con poca vista.</p>
+        </article>
+        <article class="feature">
+          <span class="feature-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9.5 4v16M4 10h16"/></svg>
+          </span>
+          <h3>Dalla parte del docente</h3>
+          <p>Mappa vista dal docente, lavagna in basso, posti numerati. Importa elenco e disposizione da Excel o CSV quando fa comodo.</p>
+        </article>
+        <article class="feature">
+          <span class="feature-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          </span>
+          <h3>Pronta da portare</h3>
+          <p>Un solo file HTML o un exe per Windows. Anche su una chiavetta, senza installare niente e senza chiedere permessi.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="download" id="download">
+    <div class="wrap">
+      <p class="kicker light">04 · Portala con te</p>
+      <h2>Scegli come usarla.</h2>
+      <p class="download-lead">La versione online è la più comoda. L'HTML e l'exe sono lì se preferisci un file tuo, da tenere su una chiavetta o su un computer senza rete.</p>
+      <div class="download-grid">
+        <article class="download-card download-card--primary">
+          <span class="tag">Consigliata</span>
+          <h3>Online</h3>
+          <p>Apri nel browser, scegli la cartella e lavora. Non c'è niente da installare.</p>
+          <a class="card-link" href="./app.html">Apri l'app <span aria-hidden="true">→</span></a>
+        </article>
+        <article class="download-card">
+          <h3>HTML portatile</h3>
+          <p>Un solo file da portare con te. Si apre con Chrome o Edge, anche da una chiavetta.</p>
+          <a class="card-link" href="./app.html" download="Cartina-di-Classe.html">Scarica .html <span aria-hidden="true">↓</span></a>
+        </article>
+        <article class="download-card">
+          <h3>Windows .exe</h3>
+          <p>Finestra propria e cartella <code>files</code> creata accanto all'app. Non serve Python.</p>
+          <a class="card-link" href="./CartinaDiClasse.exe" download>Scarica .exe <span aria-hidden="true">↓</span></a>
+        </article>
+        <article class="download-card">
+          <h3>Modello Excel</h3>
+          <p>Prepara l'elenco e la disposizione dei banchi, poi importa tutto nell'app.</p>
+          <a class="card-link" href="./Modello_Planimetria_Classi.xlsx" download>Scarica .xlsx <span aria-hidden="true">↓</span></a>
+        </article>
+      </div>
+      <p class="browser-note"><strong>Nota sui browser.</strong> Per salvare in una cartella locale servono Chrome o Edge. Firefox e Safari non hanno questa funzione: l'app si apre, ma non può scrivere i file. È un limite del browser, non dell'app.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <span class="brand-mark brand-mark--small" aria-hidden="true">
+        <svg viewBox="0 0 40 40" role="img" focusable="false">
+          <rect width="40" height="40" rx="10" fill="#003f8f"/>
+          <g fill="#fff">
+            <rect x="9" y="8" width="6" height="5" rx="1"/>
+            <rect x="17" y="8" width="6" height="5" rx="1"/>
+            <rect x="25" y="8" width="6" height="5" rx="1"/>
+            <rect x="9" y="16" width="6" height="5" rx="1"/>
+            <rect x="17" y="16" width="6" height="5" rx="1"/>
+            <rect x="25" y="16" width="6" height="5" rx="1"/>
+            <rect x="9" y="24" width="6" height="5" rx="1"/>
+            <rect x="17" y="24" width="6" height="5" rx="1"/>
+            <rect x="25" y="24" width="6" height="5" rx="1"/>
+          </g>
+          <rect x="9" y="32.5" width="22" height="1.8" rx=".9" fill="#7dd3a7"/>
+        </svg>
+      </span>
+      <span><strong>Cartina di Classe</strong><small>La pianta dei posti, senza cloud.</small></span>
+    </div>
+    <p class="footer-copy">Nessun account. Nessun tracciamento. I dati restano sul tuo computer.</p>
+    <div class="footer-links">
+      <a id="guide-link" href="#" hidden>Guida</a>
+      <a id="github-link" href="#" hidden>GitHub ↗</a>
+      <a href="#main">Torna su ↑</a>
+      <span class="version">v2.4</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var match = /^([^.]+)\.github\.io$/i.exec(location.hostname);
+    if (!match) return;
+    var user = match[1];
+    var parts = location.pathname.split('/').filter(Boolean);
+    var repo = parts.length ? parts[0] : user + '.github.io';
+    var base = 'https://github.com/' + user + '/' + repo;
+    var github = document.getElementById('github-link');
+    var guide = document.getElementById('guide-link');
+    if (github) { github.href = base; github.hidden = false; }
+    if (guide) { guide.href = base + '/blob/main/GUIDA.md'; guide.hidden = false; }
+  })();
+</script>
+</body>
+</html>

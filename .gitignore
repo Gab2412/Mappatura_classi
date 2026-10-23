@@ -1,0 +1,26 @@
+# Dati locali: classi, esportazioni, cestino, impostazioni
+/files/
+/dist/files/
+**/files/
+
+# Build e artefatti locali
+/build/
+/dist/
+/desktop/web/vendor/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+node_modules/
+
+# Sistema ed editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Log e file temporanei
+*.log
+*.tmp
+*.bak

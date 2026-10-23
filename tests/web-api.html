@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="it">
+<head><meta charset="utf-8"><title>Test API browser</title></head>
+<body>
+<pre id="out">in corso…</pre>
+<script src="../desktop/web/js/web-api.js?v=4"></script>
+<script>
+(function () {
+  'use strict';
+
+  function bytesOf(chunk) {
+    if (chunk instanceof Blob) return chunk.arrayBuffer().then(function (b) { return new Uint8Array(b); });
+    if (chunk instanceof ArrayBuffer) return Promise.resolve(new Uint8Array(chunk));
+    if (ArrayBuffer.isView(chunk)) return Promise.resolve(new Uint8Array(chunk.buffer, chunk.byteOffset, chunk.byteLength));
+    // Come il vero FileSystemWritableFileStream: una Promise non è un dato valido.
+    return Promise.reject(new TypeError('write: tipo di dato non valido (' + Object.prototype.toString.call(chunk) + ')'));
+  }
+
+  function FakeFile(name, dir) {
+    this.kind = 'file';
+    this.name = name;
+    this.dir = dir;
+    this.data = new Uint8Array(0);
+    this.lastModified = Date.now();
+  }
+  FakeFile.prototype.getFile = function () {
+    return Promise.resolve(new File([this.data], this.name, { lastModified: this.lastModified }));
+  };
+  FakeFile.prototype.createWritable = function () {
+    var self = this;
+    var chunks = [];
+    return Promise.resolve({
+      write: function (chunk) { return bytesOf(chunk).then(function (u8) { chunks.push(u8); }); },
+      close: function () {
+        var total = chunks.reduce(function (n, c) { return n + c.length; }, 0);
+        var buf = new Uint8Array(total);
+        var at = 0;
+        chunks.forEach(function (c) { buf.set(c, at); at += c.length; });
+        self.data = buf;
+        self.lastModified = Date.now();
+        return Promise.resolve();
+      },
+    });
+  };
+
+  function FakeDir(name) {
+    this.kind = 'directory';
+    this.name = name;
+    this.children = new Map();
+  }
+  FakeDir.prototype._file = function (name) {
+    var item = this.children.get(name);
+    if (!item) throw new Error('NotFoundError: ' + name);
+    if (item.kind !== 'file') throw new Error('TypeMismatchError: ' + name);
+    return item;
+  };
+  FakeDir.prototype.getFileHandle = function (name, opts) {
+    try { return Promise.resolve(this._file(name)); } catch (error) {
+      if (opts && opts.create) {
+        var file = new FakeFile(name, this);
+        this.children.set(name, file);
+        return Promise.resolve(file);
+      }
+      return Promise.reject(error);
+    }
+  };
+  FakeDir.prototype.getDirectoryHandle = function (name, opts) {
+    var item = this.children.get(name);
+    if (item) {
+      if (item.kind !== 'directory') return Promise.reject(new Error('TypeMismatchError'));
+      return Promise.resolve(item);
+    }
+    if (opts && opts.create) {
+      var dir = new FakeDir(name);
+      this.children.set(name, dir);
+      return Promise.resolve(dir);
+    }
+    return Promise.reject(new Error('NotFoundError: ' + name));
+  };
+  FakeDir.prototype.removeEntry = function (name) {
+    if (!this.children.has(name)) return Promise.reject(new Error('NotFoundError'));
+    this.children.delete(name);
+    return Promise.resolve();
+  };
+  FakeDir.prototype.values = function () {
+    var entries = Array.from(this.children.values());
+    var i = 0;
+    return {
+      next: function () {
+        return Promise.resolve(i < entries.length
+          ? { done: false, value: { kind: entries[i].kind, name: entries[i++].name } }
+          : { done: true, value: undefined });
+      },
+    };
+  };
+  FakeDir.prototype.queryPermission = function () { return Promise.resolve('granted'); };
+  FakeDir.prototype.requestPermission = function () { return Promise.resolve('granted'); };
+
+  var parentMode = new URLSearchParams(location.search).has('parent');
+  var root = new FakeDir(parentMode ? 'mappa' : 'files');
+  window.showDirectoryPicker = function () { return Promise.resolve(root); };
+
+  var results = [];
+  function check(label, condition, detail) {
+    results.push((condition ? 'OK   ' : 'FAIL ') + label + (detail ? ' — ' + detail : ''));
+  }
+
+  function finish() {
+    var failed = results.some(function (r) { return r.indexOf('FAIL') === 0; });
+    document.getElementById('out').textContent = results.join('\n') + '\n' + (failed ? 'FALLITO' : 'TUTTI I CONTROLLI SUPERATI');
+    document.title = failed ? 'TEST FALLITO' : 'TEST OK';
+  }
+
+  function base64(array) {
+    var text = '';
+    new Uint8Array(array).forEach(function (b) { text += String.fromCharCode(b); });
+    return btoa(text);
+  }
+
+  (async function () {
+    var api = CCWebApi.create();
+    check('available()', CCWebApi.available() === true);
+    check('SAVES_FILES', api.SAVES_FILES === true);
+
+    if (parentMode) {
+      var first = await api.app_info();
+      check('needDir prima della scelta', first.needDir === true);
+      var pickedParent = await api.pick_data_dir();
+      check('cartella files creata dentro quella scelta',
+        pickedParent.ok === true && pickedParent.name === 'files' && pickedParent.parent === 'mappa' && pickedParent.created === true);
+      var sub = root.children.get('files');
+      check('sottocartella files presente', !!sub && sub.kind === 'directory');
+      var createdInSub = await api.create_class('2C Prova');
+      check('classe salvata dentro files', !!sub && sub.children.has(createdInSub.file));
+      check('nessuna classe nella cartella superiore', !root.children.has(createdInSub.file));
+      finish();
+      return;
+    }
+
+    var info = await api.app_info();
+    check('needDir prima della scelta', info.needDir === true);
+
+    var picked = await api.pick_data_dir();
+    check('pick_data_dir', picked.ok === true && picked.name === 'files');
+    check('cartella files usata direttamente', !root.children.has('files'));
+    check('needDir dopo la scelta', api.needDir === false);
+
+    var created = await api.create_class('1A Prova');
+    check('create_class', created.ok === true && /\.json$/.test(created.file), created.file);
+
+    var loaded = await api.load_class(created.file);
+    check('load_class', loaded.ok === true && loaded.payload.data.className === '1A Prova');
+    loaded.payload.data.students = [{ id: 's_1', name: 'Ada Lovelace' }];
+    loaded.payload.data.seats = { '1-1-1': 's_1' };
+    var saved = await api.save_class(created.file, loaded.payload);
+    check('save_class', saved.ok === true);
+
+    var listed = await api.list_classes();
+    check('list_classes', listed.ok === true && listed.classes.length === 1 && listed.classes[0].students === 1);
+
+    var renamed = await api.rename_class(created.file, '1A Rinominata');
+    check('rename_class', renamed.ok === true);
+    var relisted = await api.list_classes();
+    check('rinomina persistita', relisted.classes[0].name === '1A Rinominata');
+
+    var dup = await api.duplicate_class(created.file);
+    check('duplicate_class', dup.ok === true && /copia/.test(dup.class.name));
+    var dupPayload = (await api.load_class(dup.file)).payload;
+    check('id alunni indipendenti', dupPayload.data.students[0].id !== 's_1');
+
+    await api.settings_save({ theme: 'light', textSize: 26 });
+    var settings = await api.settings_load();
+    check('settings', settings.settings.theme === 'light' && settings.settings.textSize === 26);
+    check('impostazioni.json scritto', root.children.has('impostazioni.json'));
+
+    var png = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10, 1, 2, 3]);
+    var exported = await api.export_bytes('prova.png', base64(png));
+    check('export_bytes', exported.ok === true && exported.filename === 'prova.png', exported.ok ? exported.path : exported.error);
+    var exported2 = await api.export_bytes('prova.png', base64(png));
+    check('export_bytes dedup', exported2.filename === 'prova-2.png', exported2.ok ? exported2.filename : exported2.error);
+    var exportsDir = root.children.get('Esportazioni');
+    var pngFile = exportsDir.children.get('prova.png');
+    check('PNG identico', pngFile.data.length === png.length && pngFile.data[1] === 80, pngFile.data.length + ' byte vs ' + png.length + ', primo=' + pngFile.data[1]);
+
+    var del = await api.delete_class(created.file);
+    check('delete_class', del.ok === true && del.trash);
+    check('file nel cestino', root.children.get('Cestino').children.has(del.trash));
+    check('classe rimossa', !root.children.has(created.file));
+
+    var listedAfter = await api.list_classes();
+    check('list_classes esclude impostazioni', listedAfter.classes.length === 1);
+
+    var folder = await api.open_folder('classes');
+    check('open_folder spiega invece di fallire in silenzio', folder.ok === false && /Esplora file/.test(folder.error));
+    var log = await api.open_log();
+    check('open_log spiega', log.ok === false && /exe/.test(log.error));
+
+    var bad = await api.load_class('manca.json');
+    check('load_class file mancante', bad.ok === false && !!bad.error);
+
+    finish();
+  })().catch(function (error) {
+    document.getElementById('out').textContent = 'ERRORE: ' + (error && error.stack || error);
+    document.title = 'TEST ERRORE';
+  });
+})();
+</script>
+</body>
+</html>

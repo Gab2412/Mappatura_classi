@@ -1,0 +1,311 @@
+/* ================================================================== */
+/* Finestre di dialogo                                                 */
+/* ================================================================== */
+
+.dialog {
+  width: min(94vw, 46rem);
+  max-height: 92vh;
+  padding: 0;
+  border: 3px solid var(--border-strong);
+  border-radius: .8rem;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, .45);
+  overflow: hidden;
+}
+
+.dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog::backdrop {
+  background: rgba(3, 8, 18, .72);
+}
+
+.dialog-wide {
+  width: min(94vw, 64rem);
+}
+
+.dialog-small {
+  width: min(94vw, 34rem);
+}
+
+.dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.15rem .8rem;
+  border-bottom: 2px solid var(--border);
+  background: var(--surface-2);
+}
+
+.dialog-head h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.dialog-subtitle {
+  margin: .15rem 0 0;
+  color: var(--muted);
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+.dialog-close {
+  display: grid;
+  place-items: center;
+  width: 2.9rem;
+  min-width: 2.9rem;
+  height: 2.9rem;
+  padding: 0;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.dialog-close:hover {
+  background: var(--surface-3);
+  border-color: var(--border-strong);
+}
+
+.dialog-body {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 1rem 1.15rem 1.1rem;
+}
+
+.dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .55rem;
+  padding: .8rem 1.15rem;
+  border-top: 2px solid var(--border);
+  background: var(--surface-2);
+}
+
+.dialog-actions .btn {
+  min-width: 7rem;
+}
+
+.dialog-body .field:last-child {
+  margin-bottom: 0;
+}
+
+.inline-details {
+  margin-top: .75rem;
+  border: 2px solid var(--border);
+  border-radius: .5rem;
+}
+
+.inline-details > *:not(summary) {
+  margin-left: .75rem;
+  margin-right: .75rem;
+}
+
+.inline-details > *:last-child {
+  margin-bottom: .75rem;
+}
+
+.settings-body fieldset {
+  margin-bottom: 1rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Importazione                                                        */
+/* ------------------------------------------------------------------ */
+
+.import-summary {
+  margin-bottom: 1rem;
+}
+
+.import-summary h3 {
+  font-size: 1.05rem;
+  margin-bottom: .4rem;
+}
+
+.import-summary h4 {
+  margin: .8rem 0 .25rem;
+  font-size: .95rem;
+}
+
+.import-summary small {
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+.import-summary ul {
+  margin: 0 0 .75rem;
+  padding-left: 1.3rem;
+}
+
+.import-summary li {
+  margin-bottom: .25rem;
+}
+
+.import-found {
+  font-weight: 800;
+}
+
+.import-missing {
+  color: var(--muted);
+  font-style: italic;
+}
+
+#import-mode-fieldset .check-line,
+#import-mode-fieldset .radio-line {
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+  padding: .55rem .6rem;
+  margin: .35rem 0;
+  border: 2px solid var(--border);
+  border-radius: .45rem;
+  background: var(--surface-2);
+  cursor: pointer;
+}
+
+#import-mode-fieldset .radio-line:has(input:checked) {
+  border-color: var(--accent);
+  border-width: 3px;
+  background: var(--accent-soft);
+}
+
+.radio-line strong {
+  display: block;
+}
+
+.radio-line small {
+  display: block;
+  color: var(--muted);
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+#import-mode-fieldset input[type="radio"] {
+  margin-top: .15em;
+}
+
+/* ------------------------------------------------------------------ */
+/* Aiuto                                                               */
+/* ------------------------------------------------------------------ */
+
+.help-body h3 {
+  font-size: 1.1rem;
+  margin-top: .25rem;
+}
+
+.help-body > section {
+  margin-bottom: 1rem;
+}
+
+.big-list {
+  line-height: 1.55;
+}
+
+.big-list li {
+  margin-bottom: .5rem;
+}
+
+.help-body details {
+  margin-bottom: .6rem;
+  border: 2px solid var(--border);
+  border-radius: .5rem;
+  background: var(--surface);
+}
+
+.help-body details > *:not(summary) {
+  margin-left: .8rem;
+  margin-right: .8rem;
+}
+
+.help-body details > *:last-child {
+  margin-bottom: .8rem;
+}
+
+.example-matrix {
+  display: inline-block;
+  margin: .4rem 0 .75rem;
+  padding: .55rem .9rem;
+  border: 2px solid var(--border);
+  border-radius: .4rem;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  line-height: 1.6;
+}
+
+/* ------------------------------------------------------------------ */
+/* Anteprima di stampa                                                 */
+/* ------------------------------------------------------------------ */
+
+.print-preview {
+  margin-top: .75rem;
+  padding: .5rem;
+  overflow: auto;
+  background: #ffffff;
+  border: 2px solid var(--border);
+  border-radius: .5rem;
+}
+
+.print-preview svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #ffffff;
+}
+
+/* ------------------------------------------------------------------ */
+/* Messaggi                                                            */
+/* ------------------------------------------------------------------ */
+
+.toast {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 1000;
+  max-width: min(92vw, 34rem);
+  padding: .8rem 1rem;
+  border: 3px solid #ffffff;
+  border-radius: .5rem;
+  background: #0b1220;
+  color: #ffffff;
+  font-size: .9rem;
+  font-weight: 700;
+  line-height: 1.35;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .5);
+  opacity: 0;
+  transform: translateY(1rem);
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.message-list {
+  margin: .5rem 0 0;
+  padding-left: 1.3rem;
+}
+
+.message-list li {
+  margin-bottom: .3rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    transition: none;
+  }
+}
