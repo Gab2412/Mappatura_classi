@@ -30,9 +30,9 @@
 
 Cartina di Classe è un'app per docenti: disegna la pianta dei banchi, assegna gli alunni, esporta un PNG pronto per la stampa. È pensata per essere leggibile e usabile anche con poca vista, senza rinunciare a un'interfaccia semplice.
 
-> Progetto sviluppato sfruttando e testando vari LLM agentici.
+> Progetto sviluppato sfruttando e testando LLM agentici.
 
-## In 30 secondi
+## Inizia in 30 secondi
 
 1. **Apri l'app** e scegli una cartella. Lì nasce `files/`, con tutto quello che serve.
 2. **Crea la classe**: nome, aula, alunni. La procedura guidata prepara i banchi e li riempie in ordine alfabetico.
@@ -70,7 +70,7 @@ Per un **backup** copia tutta la cartella `files`. Per passare una classe a un c
 
 Le versioni sono archiviate anche nelle **[Release](https://github.com/Gab2412/Mappatura_classi/releases)**.
 
-> **Browser.** Per scegliere e scrivere in una cartella locale servono **Chrome** o **Edge**. Firefox e Safari non hanno questa funzione: l'app si apre, ma non può salvare i file. È un limite del browser, non dell'app.
+> **Browser.** Per scegliere e scrivere in una cartella locale servono **Chrome** o **Edge**. Firefox e Safari non hanno questa funzione: l'app si apre, ma non può salvare i file. È un limite del browser.
 
 ## Sviluppo e compilazione
 
@@ -99,4 +99,4 @@ Tutti i dettagli su comandi, struttura, import, stampa e accessibilità sono nel
 
 ---
 
-<p align="center"><sub>Sviluppato sfruttando e testando vari LLM agentici · Nessun account · Nessun cloud</sub></p>
+<p align="center"><sub>Sviluppato sfruttando e testando LLM agentici</sub></p>
