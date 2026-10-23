@@ -175,7 +175,7 @@ Nelle **Impostazioni** scegli anche la qualità dei PNG: 150, 300 o 600 DPI.
 
 Le modifiche si vedono subito e vengono ricordate nel file `files\impostazioni.json`.
 
-- **Tema**: scuro (predefinito), chiaro o automatico.
+- **Tema**: automatico (segue il sistema), chiaro o scuro.
 - **Dimensione del testo**: da 16 a 32 pixel; ingrandisce anche la mappa.
 - **Numero del posto** e **banchi vuoti**: mostra o nasconde questi dettagli.
 - **Nomi visualizzati**: nome e cognome, solo nome, solo cognome o iniziali.
