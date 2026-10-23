@@ -2,7 +2,7 @@
 
 > Questa è la guida dettagliata. Per scaricare e iniziare, leggi il [README](README.md).
 
-Cartina dei posti di una classe pensata per docenti ipovedenti. Gira bene su una chiavetta USB, non richiede installazioni e non usa Internet.
+Cartina dei posti di una classe pensata per docenti ipovedenti. Gira bene su una chiavetta USB, non richiede installazioni e non invia dati.
 
 Il progetto offre **tre modi** per usarla:
 

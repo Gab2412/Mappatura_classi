@@ -24,7 +24,7 @@
   <img src="docs/app.png" alt="Schermata di Cartina di Classe: mappa dei banchi di una classe e elenco degli alunni" width="100%">
 </p>
 
-> **In breve.** Apri l'app, scegli una cartella, crea la classe. Nessun account, nessun cloud, nessuna connessione: le classi sono file JSON che puoi copiare, backuppare e passare a un collega.
+> **In breve.** Apri l'app, scegli una cartella, crea la classe. Nessun account, nessun cloud, nessun dato inviato: le classi sono file JSON che puoi copiare, backuppare e passare a un collega.
 
 ## Cos'è
 
