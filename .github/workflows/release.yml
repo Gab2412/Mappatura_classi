@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -23,8 +24,8 @@ jobs:
           body: |
             **Cartina di Classe ${{ github.ref_name }}**
 
-            - **Windows:** `CartinaDiClasse.exe` — nessuna installazione; crea `files` accanto a sé.
-            - **HTML portatile:** `app.html` — apri con Chrome o Edge.
+            - **Windows:** `CartinaDiClasse.exe` - nessuna installazione; crea la cartella `files` nella stessa posizione.
+            - **HTML portatile:** `app.html` - apri con Chrome o Edge.
             - **Modello Excel:** `Modello_Planimetria_Classi.xlsx`.
 
             Pagina online: https://gab2412.github.io/Mappatura_classi/
