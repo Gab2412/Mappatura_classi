@@ -316,7 +316,7 @@
       app_info: function () {
         return Promise.resolve({
           ok: true,
-          version: '2.4 (anteprima)',
+          version: '2.5 (anteprima)',
           dataDir: 'Anteprima nel browser: i file veri sono nell\'app desktop',
           classesDir: '',
           exportsDir: '',

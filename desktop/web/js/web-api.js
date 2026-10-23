@@ -247,7 +247,7 @@
         await ensureReady();
         return {
           ok: true,
-          version: '2.4 (HTML)',
+          version: '2.5 (HTML)',
           dataDir: state.dir ? (state.name + '  (cartella scelta)') : 'Cartella non ancora scelta',
           classesDir: state.dir ? state.name : '',
           exportsDir: state.dir ? state.name + '/Esportazioni' : '',

@@ -18,7 +18,7 @@
   <a href="GUIDA.md">Guida completa</a>
 </p>
 
-<p align="center"><sub><b>v2.4</b> · Chrome / Edge · Windows · HTML portatile</sub></p>
+<p align="center"><sub><b>v2.5</b> · Chrome / Edge · Windows · HTML portatile</sub></p>
 
 <p align="center">
   <img src="docs/app.png" alt="Schermata di Cartina di Classe: mappa dei banchi di una classe e elenco degli alunni" width="100%">

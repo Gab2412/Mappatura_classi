@@ -22,7 +22,7 @@ from pathlib import Path
 import webview
 
 APP_NAME = "Cartina di Classe"
-APP_VERSION = "2.4"
+APP_VERSION = "2.5"
 MAX_IMPORT_BYTES = 12 * 1024 * 1024
 DEFAULT_LAYOUT = [[2, 2, 2], [2, 2, 2], [2, 2, 2]]
 
