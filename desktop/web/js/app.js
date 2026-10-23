@@ -877,7 +877,7 @@
       el.folderBanner.hidden = false;
       if (el.folderBannerTitle) el.folderBannerTitle.textContent = 'Serve Chrome o Edge';
       if (el.folderBannerText) {
-        el.folderBannerText.textContent = 'Questo browser non permette di salvare nella cartella files. Apri questo file HTML con Chrome o Edge: le classi resteranno in file .json accanto al programma, come nell\'app desktop.';
+        el.folderBannerText.textContent = 'Questo browser non permette di salvare nella cartella dei file. Apri l\'app con Chrome o Edge: le classi resteranno in file .json nella cartella scelta.';
       }
       if (el.btnChooseFolder) el.btnChooseFolder.hidden = true;
       return;
@@ -893,9 +893,12 @@
         : 'Senza la cartella dei file l\'app non può funzionare';
     }
     if (el.folderBannerText) {
+      const chooseFolderText = location.protocol === 'file:'
+        ? 'Scegli la cartella in cui si trova questo file HTML: l\'app crea lì la sottocartella files e vi salva le classi. Finché non la scegli, non è possibile creare o aprire classi.'
+        : 'Scegli una cartella per i file: l\'app crea lì la sottocartella files e vi salva le classi. Finché non la scegli, non è possibile creare o aprire classi.';
       el.folderBannerText.textContent = restore
         ? 'Hai già scelto la cartella «' + (app.info.pendingName || 'files') + '». Per sicurezza il browser richiede un clic: premi «Riattiva l\'accesso» per continuare a leggere e salvare le classi.'
-        : 'Scegli la cartella in cui si trova questo file HTML: l\'app crea lì la sottocartella files e vi salva le classi. Finché non la scegli, non è possibile creare o aprire classi.';
+        : chooseFolderText;
     }
     if (el.btnChooseFolder) {
       el.btnChooseFolder.textContent = restore ? 'Riattiva l\'accesso' : 'Scegli la cartella…';

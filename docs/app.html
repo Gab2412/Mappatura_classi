@@ -3,7 +3,7 @@
   Cartina di Classe — applicazione portatile in un solo file.
   Nessuna installazione, nessun account, nessuna connessione di rete.
   Tutti i dati restano nella cartella scelta («files»).
-  Generata il 2026-10-23T11:19:38.384Z
+  Generata il 2026-10-23T11:57:53.115Z
 -->
 
 <html lang="it" data-theme="dark">
@@ -3580,7 +3580,7 @@ body.is-panning * {
     <main id="main-home" class="home-main">
       <div id="folder-banner" class="folder-banner" hidden>
         <p class="strong-label" id="folder-banner-title">Senza la cartella dei file l'app non può funzionare</p>
-        <p class="hint" id="folder-banner-text">Scegli la cartella in cui si trova questo file HTML: l'app crea lì la sottocartella <strong>files</strong> e vi salva le classi. Finché non la scegli, non è possibile creare o aprire classi.</p>
+        <p class="hint" id="folder-banner-text">Scegli una cartella per i file: l'app crea lì la sottocartella <strong>files</strong> e vi salva le classi. Finché non la scegli, non è possibile creare o aprire classi.</p>
         <button type="button" id="btn-choose-folder" class="btn btn-green btn-xl">Scegli la cartella…</button>
       </div>
 
@@ -8488,7 +8488,7 @@ window.CC.TEMPLATE_XLSX_B64 = "UEsDBBQAAAAIACWAVV1Gx01IlwAAAM0AAAAQAAAAZG9jUHJvc
       el.folderBanner.hidden = false;
       if (el.folderBannerTitle) el.folderBannerTitle.textContent = 'Serve Chrome o Edge';
       if (el.folderBannerText) {
-        el.folderBannerText.textContent = 'Questo browser non permette di salvare nella cartella files. Apri questo file HTML con Chrome o Edge: le classi resteranno in file .json accanto al programma, come nell\'app desktop.';
+        el.folderBannerText.textContent = 'Questo browser non permette di salvare nella cartella dei file. Apri l\'app con Chrome o Edge: le classi resteranno in file .json nella cartella scelta.';
       }
       if (el.btnChooseFolder) el.btnChooseFolder.hidden = true;
       return;
@@ -8504,9 +8504,12 @@ window.CC.TEMPLATE_XLSX_B64 = "UEsDBBQAAAAIACWAVV1Gx01IlwAAAM0AAAAQAAAAZG9jUHJvc
         : 'Senza la cartella dei file l\'app non può funzionare';
     }
     if (el.folderBannerText) {
+      const chooseFolderText = location.protocol === 'file:'
+        ? 'Scegli la cartella in cui si trova questo file HTML: l\'app crea lì la sottocartella files e vi salva le classi. Finché non la scegli, non è possibile creare o aprire classi.'
+        : 'Scegli una cartella per i file: l\'app crea lì la sottocartella files e vi salva le classi. Finché non la scegli, non è possibile creare o aprire classi.';
       el.folderBannerText.textContent = restore
         ? 'Hai già scelto la cartella «' + (app.info.pendingName || 'files') + '». Per sicurezza il browser richiede un clic: premi «Riattiva l\'accesso» per continuare a leggere e salvare le classi.'
-        : 'Scegli la cartella in cui si trova questo file HTML: l\'app crea lì la sottocartella files e vi salva le classi. Finché non la scegli, non è possibile creare o aprire classi.';
+        : chooseFolderText;
     }
     if (el.btnChooseFolder) {
       el.btnChooseFolder.textContent = restore ? 'Riattiva l\'accesso' : 'Scegli la cartella…';
