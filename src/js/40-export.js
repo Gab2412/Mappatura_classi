@@ -403,10 +403,10 @@
 
     /* Lato delle finestre --------------------------------------------- */
     if (isWinLeft || isWinRight) {
-      const bandTop = round(gridY - 30);
-      const bandBottom = round(boardY + 26);
-      const bandH = Math.max(60, bandBottom - bandTop);
-      svg += '<rect x="' + round(winX) + '" y="' + round(bandTop) + '" width="' + winW + '" height="' + round(bandH) + '" rx="10" fill="none" stroke="#4a94e0" stroke-width="1.8" stroke-dasharray="6 5"/>';
+      const bandTop = round(gridY - 24);
+      const bandBottom = round(boardY - 6);
+      const bandH = Math.max(50, bandBottom - bandTop);
+      svg += '<rect x="' + round(winX) + '" y="' + round(bandTop) + '" width="' + winW + '" height="' + round(bandH) + '" rx="8" fill="none" stroke="#4a94e0" stroke-width="1.8" stroke-dasharray="6 5"/>';
       const bandCx = round(winX + winW / 2);
       const bandCy = round(bandTop + bandH / 2);
       const fs = 9.5;

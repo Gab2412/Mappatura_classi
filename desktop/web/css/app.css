@@ -505,6 +505,10 @@ body {
   font-size: .85rem;
 }
 
+.toolbar .btn.btn-history {
+  font-size: 1.55rem;
+}
+
 .class-body {
   display: grid;
   flex: 1 1 auto;

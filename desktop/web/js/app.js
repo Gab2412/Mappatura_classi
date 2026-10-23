@@ -621,10 +621,14 @@
       }
     });
     $('btn-import-2').addEventListener('click', importFromFile);
-    $('btn-edit-layout').addEventListener('click', function () {
-      openPanel('layout');
-    });
-    $('btn-auto-assign').addEventListener('click', autoAssignSeats);
+    if ($('btn-edit-layout')) {
+      $('btn-edit-layout').addEventListener('click', function () {
+        openPanel('layout');
+      });
+    }
+    if ($('btn-auto-assign')) {
+      $('btn-auto-assign').addEventListener('click', autoAssignSeats);
+    }
     el.btnTogglePanel.addEventListener('click', function () {
       togglePanel();
     });

@@ -70,20 +70,18 @@
         <span id="save-status" class="save-status" aria-live="polite">Salvato</span>
       </div>
       <div class="class-top-actions">
-        <button type="button" id="btn-undo" class="btn btn-ghost btn-history" disabled aria-label="Annulla l'ultima modifica" title="Annulla (Ctrl+Z)">↶</button>
-        <button type="button" id="btn-redo" class="btn btn-ghost btn-history" disabled aria-label="Ripeti la modifica annullata" title="Ripeti (Ctrl+Y)">↷</button>
-        <button type="button" id="btn-toggle-panel" class="btn btn-ghost btn-edit" aria-expanded="true" aria-pressed="true" aria-controls="side-panel"
-                title="Mostra o nascondi il pannello per modificare banchi e alunni"><span aria-hidden="true">✎</span> Modifica</button>
-        <button type="button" id="btn-rename-class" class="btn btn-amber">Rinomina</button>
         <button type="button" id="btn-class-settings" class="btn btn-ghost">Impostazioni</button>
       </div>
     </header>
 
     <div class="toolbar" role="toolbar" aria-label="Comandi principali">
       <div class="toolbar-group">
+        <button type="button" id="btn-undo" class="btn btn-ghost btn-history" disabled aria-label="Annulla l'ultima modifica" title="Annulla (Ctrl+Z)">↶</button>
+        <button type="button" id="btn-redo" class="btn btn-ghost btn-history" disabled aria-label="Ripeti la modifica annullata" title="Ripeti (Ctrl+Y)">↷</button>
+        <button type="button" id="btn-rename-class" class="btn btn-amber" title="Rinomina questa classe">Rinomina</button>
+        <button type="button" id="btn-toggle-panel" class="btn btn-ghost btn-edit" aria-expanded="true" aria-pressed="true" aria-controls="side-panel"
+                title="Mostra o nascondi il pannello per modificare banchi e alunni"><span aria-hidden="true">✎</span> Modifica</button>
         <button type="button" id="btn-add-students" class="btn btn-green" title="Aggiungi gli alunni della classe, uno alla volta o incollando un elenco">Aggiungi alunni</button>
-        <button type="button" id="btn-edit-layout" class="btn btn-blue" title="Modifica il numero di file, colonne e i banchi per ogni cella">Quanti banchi</button>
-        <button type="button" id="btn-auto-assign" class="btn btn-cyan" title="Assegna automaticamente un banco libero agli alunni in ordine alfabetico (A→Z)">Disponi nei banchi</button>
       </div>
       <div class="toolbar-group toolbar-export">
         <span class="toolbar-label">Esporta</span>
