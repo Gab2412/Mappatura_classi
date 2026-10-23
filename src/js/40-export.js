@@ -253,14 +253,14 @@
     const isWinLeft = state.windowsSide === 'left';
     const isWinRight = state.windowsSide === 'right';
     const winW = 24;
-    const winGap = 16;
+    const winGap = 20;
     const winOverhead = winW + winGap;
 
     // Spazio orizzontale degli elementi laterali rispetto alla griglia banchi
     const overhead = labelBlockW + (isWinLeft ? winOverhead : 0) + (isWinRight ? winOverhead : 0);
 
-    // Margine minimo dalla cornice del foglio
-    const pageMarginMin = 34;
+    // Margine minimo generoso dalla cornice del foglio (mai sul bordo)
+    const pageMarginMin = 56;
     const maxRoomW = W - 2 * pageMarginMin;
     const maxDeskGridW = Math.max(50, maxRoomW - overhead);
 
@@ -293,6 +293,7 @@
     const roomStartX = Math.max(pageMarginMin, Math.round((W - roomTotalW) / 2));
 
     let winX = null;
+    let labelStartX = null;
     let labelEndX = null;
     let gridX = null;
     let cursor = roomStartX;
@@ -301,6 +302,7 @@
       winX = cursor;
       cursor += winOverhead;
     }
+    labelStartX = cursor;
     labelEndX = cursor + labelW;
     cursor += labelBlockW;
     gridX = cursor;
@@ -395,16 +397,16 @@
 
     /* Lavagna e piè di pagina ---------------------------------------- */
     const boardY = gridY + gridH + boardGap;
-    const boardX1 = Math.max(24, (winX != null && isWinLeft) ? winX : (labelEndX - labelW - 6));
-    const boardX2 = Math.min(W - 24, (winX != null && isWinRight) ? (winX + winW) : (gridX + gridW + 6));
+    const boardX1 = Math.max(area.x, labelStartX - 6);
+    const boardX2 = Math.min(area.x + area.w, gridX + gridW + 6);
     svg += '<line x1="' + round(boardX1) + '" y1="' + round(boardY) + '" x2="' + round(boardX2) + '" y2="' + round(boardY) + '" stroke="' + palette.border + '" stroke-width="3.4"/>';
     svg += '<text x="' + round(boardX1) + '" y="' + round(boardY + 21) + '" fill="' + palette.text + '" font-family="' + FONT + '" font-size="10.2" font-weight="700" letter-spacing="1.2">LAVAGNA · CATTEDRA</text>';
     svg += '<text x="' + round(boardX2) + '" y="' + round(boardY + 21) + '" fill="' + palette.muted + '" font-family="' + FONT + '" font-size="8.4" font-weight="600" text-anchor="end">PRIMA FILA · DAVANTI ALLA CLASSE</text>';
 
     /* Lato delle finestre --------------------------------------------- */
     if (isWinLeft || isWinRight) {
-      const bandTop = round(gridY - 24);
-      const bandBottom = round(boardY - 6);
+      const bandTop = round(gridY - 14);
+      const bandBottom = round(gridY + gridH + 4);
       const bandH = Math.max(50, bandBottom - bandTop);
       svg += '<rect x="' + round(winX) + '" y="' + round(bandTop) + '" width="' + winW + '" height="' + round(bandH) + '" rx="8" fill="none" stroke="#4a94e0" stroke-width="1.8" stroke-dasharray="6 5"/>';
       const bandCx = round(winX + winW / 2);
@@ -444,16 +446,17 @@
 
     const isWinLeft = state.windowsSide === 'left';
     const isWinRight = state.windowsSide === 'right';
-    const roomLeft = isWinLeft ? (18 + 62) : (18 + 38);
-    const roomRight = isWinRight ? (W - 18 - 62) : (W - 18 - 38);
-    const roomAvailW = Math.max(100, roomRight - roomLeft);
+    const pageMarginMin = 56;
+    const winOverhead = 44;
+    const labelBlockW = 92;
+    const overhead = labelBlockW + (isWinLeft ? winOverhead : 0) + (isWinRight ? winOverhead : 0);
+    const maxDeskGridW = Math.max(50, (W - 2 * pageMarginMin) - overhead);
 
     let gapsW = (activeCols - 1) * LANE_GAP;
     active.forEach(function (c) { gapsW += (index.maxPerCol[c] - 1) * DESK_GAP; });
-    const maxDeskGridW = Math.max(50, roomAvailW - 95);
 
     let deskW = totalUnits > 0 ? (maxDeskGridW - gapsW) / totalUnits : 0;
-    deskW = Math.max(18, Math.min(155, deskW));
+    deskW = Math.max(18, Math.min(145, deskW));
     const deskH = Math.max(24, Math.min(105, deskW * 0.65));
     const gridH = rows * deskH + (rows - 1) * ROW_GAP;
     const h = Math.round(136 + 26 + 34 + 14 + gridH + 72);

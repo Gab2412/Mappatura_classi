@@ -1063,8 +1063,15 @@
     if (!(await ensureFolder())) return;
     if (!api || typeof api.open_folder !== 'function') return;
     const res = await api.open_folder(kind);
-    if (res && res.ok && res.path) toast('Cartella aperta: ' + res.path);
-    else if (res && res.error) toast(res.error, true);
+    if (res && res.ok && res.path) {
+      toast('Cartella aperta: ' + res.path);
+    } else if (res && res.error) {
+      if (el.dialogExported && el.dialogExported.open && el.exportedInfo) {
+        el.exportedInfo.textContent = res.error;
+        el.exportedInfo.style.color = 'var(--c-amber, #b45309)';
+      }
+      toast(res.error, true);
+    }
   }
 
   /* ------------------------------------------------------------------ */

@@ -500,6 +500,7 @@ class Api:
 
     def open_folder(self, kind: str = "classes") -> dict:
         folder = self.exports if kind == "exports" else self.classes
+        folder.mkdir(parents=True, exist_ok=True)
         try:
             os.startfile(str(folder))  # type: ignore[attr-defined]
             return {"ok": True, "path": str(folder)}
