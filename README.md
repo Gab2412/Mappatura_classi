@@ -88,7 +88,7 @@ Questa sezione è riservata a sviluppatori o a chi desidera modificare il codice
 - `python desktop/test_api.py`  
   Verifica il backend locale (lettura/scrittura file, cartella `files/`, spostamento nel cestino e gestione degli errori).
 
-  > Progetto sviluppato collaudando e testando LLM agentici.
+> Progetto sviluppato collaudando e testando LLM agentici.
 
 ### Pubblicazione del sito (`docs/`)
 La cartella `docs/` contiene il sito statico servito automaticamente da GitHub Pages:
