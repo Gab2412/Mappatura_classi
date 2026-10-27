@@ -30,7 +30,6 @@
 
 Cartina di Classe è un'app per docenti: disegna la pianta dei banchi, assegna gli alunni, esporta un PNG pronto per la stampa. È pensata per essere leggibile e usabile anche con poca vista, senza rinunciare a un'interfaccia semplice.
 
-> Progetto sviluppato sfruttando e testando LLM agentici.
 
 ## Inizia in 30 secondi
 
@@ -88,6 +87,8 @@ Questa sezione è riservata a sviluppatori o a chi desidera modificare il codice
   Esegue la suite di test unitari sul motore dell'app (algoritmo di numerazione dei banchi, disposizione automatica, calcolo delle distanze e parser dei file).
 - `python desktop/test_api.py`  
   Verifica il backend locale (lettura/scrittura file, cartella `files/`, spostamento nel cestino e gestione degli errori).
+
+  > Progetto sviluppato collaudando e testando LLM agentici.
 
 ### Pubblicazione del sito (`docs/`)
 La cartella `docs/` contiene il sito statico servito automaticamente da GitHub Pages:
